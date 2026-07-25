@@ -1,5 +1,5 @@
 // src/stores/travelStore.ts
-// Pinia store managing travel destinations, blog posts, photo gallery, bookmarks, trip budget calculator, visual trip itinerary builder, packing checklist generator, travel quiz recommender, travel map visualizer, saved offline reading manager, weather/climate guide widget, user travel story submission form, interactive audio guide player, travel expenses analytics & export tool, destination comparison matrix tool, and travel currency & exchange rate calculator.
+// Pinia store managing travel destinations, blog posts, photo gallery, bookmarks, trip budget calculator, visual trip itinerary builder, packing checklist generator, travel quiz recommender, travel map visualizer, saved offline reading manager, weather/climate guide widget, user travel story submission form, interactive audio guide player, travel expenses analytics & export tool, destination comparison matrix tool, travel currency & exchange rate calculator, and interactive travel phrasebook widget.
 // Connects to: views/*.vue, components/*.vue
 // Created: 2026-07-25
 
@@ -52,6 +52,18 @@ export interface AudioGuideTrack {
   description: string;
   coverImage: string;
   chapters: AudioChapterMarker[];
+}
+
+export type PhraseCategory = 'Greetings' | 'Dining' | 'Directions' | 'Emergency' | 'Shopping';
+
+export interface PhraseItem {
+  id: string;
+  language: 'Japanese' | 'Greek' | 'German' | 'Swahili';
+  category: PhraseCategory;
+  english: string;
+  translated: string;
+  phonetic: string;
+  langCode: string;
 }
 
 export interface Destination {
@@ -230,6 +242,31 @@ export const INITIAL_DESTINATIONS: Destination[] = [
   }
 ];
 
+export const INITIAL_PHRASEBOOK: PhraseItem[] = [
+  // Japanese (Kyoto)
+  { id: 'ph-1', language: 'Japanese', category: 'Greetings', english: 'Hello / Good afternoon', translated: 'こんにちは', phonetic: 'Konnichiwa', langCode: 'ja-JP' },
+  { id: 'ph-2', language: 'Japanese', category: 'Greetings', english: 'Thank you very much', translated: 'ありがとうございます', phonetic: 'Arigatou gozaimasu', langCode: 'ja-JP' },
+  { id: 'ph-3', language: 'Japanese', category: 'Dining', english: 'Delicious! / Thank you for the meal', translated: 'ごちそうさまでした', phonetic: 'Gochisousama deshita', langCode: 'ja-JP' },
+  { id: 'ph-4', language: 'Japanese', category: 'Directions', english: 'Where is the train station?', translated: '駅はどこですか？', phonetic: 'Eki wa doko desu ka?', langCode: 'ja-JP' },
+  { id: 'ph-5', language: 'Japanese', category: 'Shopping', english: 'How much is this?', translated: 'これはいくらですか？', phonetic: 'Kore wa ikura desu ka?', langCode: 'ja-JP' },
+
+  // Greek (Santorini)
+  { id: 'ph-11', language: 'Greek', category: 'Greetings', english: 'Good morning', translated: 'Καλημέρα', phonetic: 'Kalimera', langCode: 'el-GR' },
+  { id: 'ph-12', language: 'Greek', category: 'Greetings', english: 'Thank you', translated: 'Ευχαριστώ', phonetic: 'Efcharisto', langCode: 'el-GR' },
+  { id: 'ph-13', language: 'Greek', category: 'Dining', english: 'The bill, please', translated: 'Το λογαριασμό, παρακαλώ', phonetic: 'To logariasmo, parakalo', langCode: 'el-GR' },
+  { id: 'ph-14', language: 'Greek', category: 'Directions', english: 'Where is the beach?', translated: 'Πού είναι η παραλία;', phonetic: 'Pou einai i paralia?', langCode: 'el-GR' },
+
+  // German (Swiss Alps)
+  { id: 'ph-21', language: 'German', category: 'Greetings', english: 'Hello (Swiss German)', translated: 'Grüezi', phonetic: 'Grew-tsi', langCode: 'de-CH' },
+  { id: 'ph-22', language: 'German', category: 'Greetings', english: 'Thank you very much', translated: 'Vielen Dank', phonetic: 'Fee-len Dank', langCode: 'de-DE' },
+  { id: 'ph-23', language: 'German', category: 'Directions', english: 'Where is the cable car?', translated: 'Wo ist die Seilbahn?', phonetic: 'Vo ist dee Zyle-bahn?', langCode: 'de-DE' },
+
+  // Swahili (Serengeti)
+  { id: 'ph-31', language: 'Swahili', category: 'Greetings', english: 'Hello / Welcome', translated: 'Jambo / Karibu', phonetic: 'Jahm-boh / Kah-ree-boo', langCode: 'sw' },
+  { id: 'ph-32', language: 'Swahili', category: 'Greetings', english: 'Thank you very much', translated: 'Asante sana', phonetic: 'Ah-sahn-teh sah-nah', langCode: 'sw' },
+  { id: 'ph-33', language: 'Swahili', category: 'Emergency', english: 'No worries / It is okay', translated: 'Hakuna matata', phonetic: 'Hah-koo-nah mah-tah-tah', langCode: 'sw' }
+];
+
 export const INITIAL_AUDIO_TRACKS: AudioGuideTrack[] = [
   {
     id: 'audio-1',
@@ -334,6 +371,7 @@ export const useTravelStore = defineStore('travel', {
     gallery: INITIAL_GALLERY as GalleryPhoto[],
     guestStories: INITIAL_GUEST_STORIES as GuestTravelStory[],
     audioTracks: INITIAL_AUDIO_TRACKS as AudioGuideTrack[],
+    phrasebook: INITIAL_PHRASEBOOK as PhraseItem[],
     selectedRegion: 'All' as string,
     searchQuery: '' as string,
     savedWishlist: [] as string[],
@@ -373,10 +411,13 @@ export const useTravelStore = defineStore('travel', {
     compareDestIdA: 'dest-1' as string,
     compareDestIdB: 'dest-2' as string,
 
-    // Currency Calculator State
     calcAmount: 500 as number,
     calcFromCurr: 'USD' as CurrencyCode,
-    calcToCurr: 'JPY' as CurrencyCode
+    calcToCurr: 'JPY' as CurrencyCode,
+
+    // Phrasebook State
+    selectedPhraseLanguage: 'Japanese' as 'Japanese' | 'Greek' | 'German' | 'Swahili',
+    selectedPhraseCategory: 'All' as 'All' | PhraseCategory
   }),
 
   getters: {
@@ -517,6 +558,14 @@ export const useTravelStore = defineStore('travel', {
         convertedValue: Math.round(converted * 100) / 100,
         rateText: `1 ${state.calcFromCurr} = ${rateFormula} ${state.calcToCurr}`
       };
+    },
+
+    filteredPhrases: (state) => {
+      return state.phrasebook.filter((p) => {
+        const matchesLang = p.language === state.selectedPhraseLanguage;
+        const matchesCategory = state.selectedPhraseCategory === 'All' || p.category === state.selectedPhraseCategory;
+        return matchesLang && matchesCategory;
+      });
     }
   },
 
@@ -823,7 +872,6 @@ export const useTravelStore = defineStore('travel', {
       this.compareDestIdB = temp;
     },
 
-    // Currency Calculator Actions
     setCalcAmount(amount: number) {
       this.calcAmount = Math.max(0, amount);
     },
@@ -840,6 +888,24 @@ export const useTravelStore = defineStore('travel', {
       const temp = this.calcFromCurr;
       this.calcFromCurr = this.calcToCurr;
       this.calcToCurr = temp;
+    },
+
+    // Phrasebook Actions
+    setPhraseLanguage(lang: 'Japanese' | 'Greek' | 'German' | 'Swahili') {
+      this.selectedPhraseLanguage = lang;
+    },
+
+    setPhraseCategory(cat: 'All' | PhraseCategory) {
+      this.selectedPhraseCategory = cat;
+    },
+
+    speakPhrase(phrase: PhraseItem) {
+      if ('speechSynthesis' in window) {
+        window.speechSynthesis.cancel();
+        const utterance = new SpeechSynthesisUtterance(phrase.translated);
+        utterance.lang = phrase.langCode;
+        window.speechSynthesis.speak(utterance);
+      }
     }
   }
 });

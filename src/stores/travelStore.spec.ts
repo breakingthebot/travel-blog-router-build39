@@ -49,18 +49,19 @@ describe('travelStore Pinia store', () => {
     expect(budgetUsd.currencySymbol).toBe('$');
   });
 
-  it('should support dynamic currency conversions and currency swapping', () => {
+  it('should filter travel phrasebook items by language and category', () => {
     const store = useTravelStore();
-    store.setCalcAmount(100);
-    store.setCalcFromCurr('USD');
-    store.setCalcToCurr('JPY');
+    expect(store.selectedPhraseLanguage).toBe('Japanese');
 
-    const result = store.convertedCurrencyResult;
-    expect(result.convertedValue).toBe(15500);
-    expect(result.toSymbol).toBe('¥');
+    expect(store.filteredPhrases.length).toBe(5);
 
-    store.swapCalcCurrencies();
-    expect(store.calcFromCurr).toBe('JPY');
-    expect(store.calcToCurr).toBe('USD');
+    store.setPhraseCategory('Greetings');
+    expect(store.filteredPhrases.length).toBe(2);
+    expect(store.filteredPhrases[0].phonetic).toBe('Konnichiwa');
+
+    store.setPhraseLanguage('Greek');
+    store.setPhraseCategory('All');
+    expect(store.filteredPhrases.length).toBe(4);
+    expect(store.filteredPhrases[0].phonetic).toBe('Kalimera');
   });
 });

@@ -17,6 +17,7 @@ import AudioGuidePlayer from '../components/AudioGuidePlayer.vue';
 import TravelExpensesExporter from '../components/TravelExpensesExporter.vue';
 import DestinationComparator from '../components/DestinationComparator.vue';
 import CurrencyCalculator from '../components/CurrencyCalculator.vue';
+import TravelPhrasebook from '../components/TravelPhrasebook.vue';
 
 const travelStore = useTravelStore();
 const regions = ['All', 'Europe', 'Asia', 'Africa', 'Americas'];
@@ -104,6 +105,11 @@ const regions = ['All', 'Europe', 'Asia', 'Africa', 'Americas'];
     <!-- Travel Currency & Exchange Rate Calculator -->
     <section class="margin-top">
       <CurrencyCalculator />
+    </section>
+
+    <!-- Essential Travel Phrasebook -->
+    <section class="margin-top">
+      <TravelPhrasebook />
     </section>
 
     <!-- Expenses Analytics & Export Tool -->
