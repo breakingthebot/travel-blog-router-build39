@@ -11,6 +11,7 @@ import ItineraryBuilder from '../components/ItineraryBuilder.vue';
 import PackingChecklist from '../components/PackingChecklist.vue';
 import TravelQuiz from '../components/TravelQuiz.vue';
 import TravelMapVisualizer from '../components/TravelMapVisualizer.vue';
+import WeatherClimateWidget from '../components/WeatherClimateWidget.vue';
 
 const travelStore = useTravelStore();
 const regions = ['All', 'Europe', 'Asia', 'Africa', 'Americas'];
@@ -68,6 +69,11 @@ const regions = ['All', 'Europe', 'Asia', 'Africa', 'Americas'];
     <!-- Interactive Travel Quiz Section -->
     <section class="margin-bottom-calc">
       <TravelQuiz />
+    </section>
+
+    <!-- Weather & Climate Guide Section -->
+    <section class="margin-top">
+      <WeatherClimateWidget />
     </section>
 
     <!-- Interactive Travel Map & Distance Matrix -->

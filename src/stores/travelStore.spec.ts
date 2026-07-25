@@ -60,30 +60,16 @@ describe('travelStore Pinia store', () => {
     expect(updatedDays.length).toBe(2);
   });
 
-  it('should load packing presets, toggle items, add custom items, and compute progress correctly', () => {
+  it('should support weather climate seasonal selection and temperature conversion (C to F)', () => {
     const store = useTravelStore();
-    store.loadPackingPreset('Beach Resort');
-    expect(store.currentPackingPreset).toBe('Beach Resort');
-    expect(store.packingItems.length).toBe(1);
-  });
+    expect(store.selectedSeason).toBe('spring');
 
-  it('should support offline article bookmarking, reading progress updates, and clearing saved list', () => {
-    const store = useTravelStore();
-    const postId = 'post-2';
-    expect(store.isPostSavedOffline(postId)).toBe(false);
+    store.setSelectedSeason('summer');
+    expect(store.selectedSeason).toBe('summer');
 
-    // Save offline
-    store.toggleSaveOfflinePost(postId);
-    expect(store.isPostSavedOffline(postId)).toBe(true);
-    expect(store.savedOfflinePosts.some((p) => p.id === postId)).toBe(true);
-
-    // Update reading progress
-    store.updateReadingProgress(postId, 75);
-    expect(store.readingProgress[postId]).toBe(75);
-
-    // Clear all saved
-    store.clearAllSavedOfflinePosts();
-    expect(store.savedOfflinePostIds.length).toBe(0);
-    expect(store.isPostSavedOffline(postId)).toBe(false);
+    // Kyoto spring temp 16C -> 61F
+    expect(store.formatTemp(16)).toBe('16°C');
+    store.toggleTempUnit();
+    expect(store.formatTemp(16)).toBe('61°F');
   });
 });

@@ -12,6 +12,7 @@ import BudgetCalculator from '../components/BudgetCalculator.vue';
 import ItineraryBuilder from '../components/ItineraryBuilder.vue';
 import PackingChecklist from '../components/PackingChecklist.vue';
 import TravelMapVisualizer from '../components/TravelMapVisualizer.vue';
+import WeatherClimateWidget from '../components/WeatherClimateWidget.vue';
 
 const route = useRoute();
 const travelStore = useTravelStore();
@@ -52,6 +53,7 @@ const relatedPosts = computed(() => {
           </ul>
         </div>
 
+        <WeatherClimateWidget :destination-id="destination.id" class="margin-top-calc" />
         <BudgetCalculator :destination-id="destination.id" class="margin-top-calc" />
         <ItineraryBuilder :destination-id="destination.id" class="margin-top-calc" />
         <TravelMapVisualizer :highlight-dest-id="destination.id" class="margin-top-calc" />

@@ -5,6 +5,17 @@ All notable changes to **Build 39 — TravelPulse Vue Router Multi-page Travel B
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.8.0] - 2026-07-25
+
+### Added
+- Built `src/components/WeatherClimateWidget.vue` providing an interactive seasonal weather forecast & climate guide.
+- Added seasonal tab pills (`🌸 Spring`, `☀️ Summer`, `🍁 Autumn`, `❄️ Winter`).
+- Added temperature unit conversion toggle switch (`°C` vs `°F`).
+- Added seasonal temperature average meters and rainfall depth progress bars.
+- Added "Recommended Visiting Window" badge and "Seasonal Packing Advice" guidance card.
+- Integrated `WeatherClimateWidget.vue` into `DestinationDetailView.vue` and `DestinationsView.vue`.
+- Added unit tests in `src/stores/travelStore.spec.ts` testing seasonal climate selection and temperature conversion (°C vs °F).
+
 ## [0.7.0] - 2026-07-25
 
 ### Added

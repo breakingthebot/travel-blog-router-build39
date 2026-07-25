@@ -1,5 +1,5 @@
 // src/stores/travelStore.ts
-// Pinia store managing travel destinations, blog posts, photo gallery, bookmarks, trip budget calculator, visual trip itinerary builder, packing checklist generator, travel quiz recommender, travel map visualizer, and saved offline reading manager.
+// Pinia store managing travel destinations, blog posts, photo gallery, bookmarks, trip budget calculator, visual trip itinerary builder, packing checklist generator, travel quiz recommender, travel map visualizer, saved offline reading manager, and weather/climate guide widget.
 // Connects to: views/*.vue, components/*.vue
 // Created: 2026-07-25
 
@@ -13,6 +13,15 @@ export interface DestinationMapCoords {
   flightFromNyc: string;
   flightFromLondon: string;
   distanceFromNycKm: number;
+}
+
+export type SeasonKey = 'spring' | 'summer' | 'autumn' | 'winter';
+
+export interface DestinationClimate {
+  avgTempC: Record<SeasonKey, number>;
+  rainfallMm: Record<SeasonKey, number>;
+  bestMonths: string;
+  packingTip: string;
 }
 
 export interface Destination {
@@ -33,6 +42,7 @@ export interface Destination {
   };
   vibeTags: string[];
   coords: DestinationMapCoords;
+  climate: DestinationClimate;
 }
 
 export interface BlogPost {
@@ -92,6 +102,7 @@ export interface QuizQuestion {
 
 export type TravelStyle = 'backpacker' | 'explorer' | 'luxury';
 export type CurrencyCode = 'USD' | 'EUR' | 'GBP' | 'JPY';
+export type TempUnit = 'C' | 'F';
 
 export const CURRENCY_RATES: Record<CurrencyCode, { symbol: string; rateFromUsd: number }> = {
   USD: { symbol: '$', rateFromUsd: 1.0 },
@@ -114,7 +125,13 @@ export const INITIAL_DESTINATIONS: Destination[] = [
     featured: true,
     dailyCostsUsd: { backpacker: 55, explorer: 130, luxury: 320 },
     vibeTags: ['culture', 'historic', 'temple', 'gourmet'],
-    coords: { lat: 35.0116, lng: 135.7681, svgX: 84.5, svgY: 38.0, flightFromNyc: '14.5 hrs', flightFromLondon: '12.0 hrs', distanceFromNycKm: 10850 }
+    coords: { lat: 35.0116, lng: 135.7681, svgX: 84.5, svgY: 38.0, flightFromNyc: '14.5 hrs', flightFromLondon: '12.0 hrs', distanceFromNycKm: 10850 },
+    climate: {
+      avgTempC: { spring: 16, summer: 28, autumn: 18, winter: 5 },
+      rainfallMm: { spring: 110, summer: 220, autumn: 140, winter: 50 },
+      bestMonths: '🌸 March - May & 🍁 October - November',
+      packingTip: 'Light jacket for spring cherry blossom evenings & comfortable walking sneakers.'
+    }
   },
   {
     id: 'dest-2',
@@ -129,7 +146,13 @@ export const INITIAL_DESTINATIONS: Destination[] = [
     featured: true,
     dailyCostsUsd: { backpacker: 75, explorer: 180, luxury: 450 },
     vibeTags: ['beach', 'romantic', 'sunset', 'island'],
-    coords: { lat: 36.3932, lng: 25.4615, svgX: 57.0, svgY: 37.5, flightFromNyc: '10.0 hrs', flightFromLondon: '3.8 hrs', distanceFromNycKm: 8120 }
+    coords: { lat: 36.3932, lng: 25.4615, svgX: 57.0, svgY: 37.5, flightFromNyc: '10.0 hrs', flightFromLondon: '3.8 hrs', distanceFromNycKm: 8120 },
+    climate: {
+      avgTempC: { spring: 19, summer: 29, autumn: 22, winter: 14 },
+      rainfallMm: { spring: 25, summer: 5, autumn: 45, winter: 80 },
+      bestMonths: '☀️ May - October',
+      packingTip: 'Sunhat, reef-safe sunscreen, sunglasses, and light breathable linen shirts.'
+    }
   },
   {
     id: 'dest-3',
@@ -144,7 +167,13 @@ export const INITIAL_DESTINATIONS: Destination[] = [
     featured: true,
     dailyCostsUsd: { backpacker: 90, explorer: 210, luxury: 520 },
     vibeTags: ['alpine', 'hiking', 'mountain', 'nature'],
-    coords: { lat: 46.5197, lng: 8.0226, svgX: 52.0, svgY: 30.0, flightFromNyc: '8.5 hrs', flightFromLondon: '1.5 hrs', distanceFromNycKm: 6380 }
+    coords: { lat: 46.5197, lng: 8.0226, svgX: 52.0, svgY: 30.0, flightFromNyc: '8.5 hrs', flightFromLondon: '1.5 hrs', distanceFromNycKm: 6380 },
+    climate: {
+      avgTempC: { spring: 10, summer: 22, autumn: 12, winter: -4 },
+      rainfallMm: { spring: 85, summer: 130, autumn: 90, winter: 70 },
+      bestMonths: '⛷️ Dec - Mar (Skiing) & 🥾 Jun - Sep (Hiking)',
+      packingTip: 'Thermal base layers, waterproof ski/hiking boots, fleece jacket, and gloves.'
+    }
   },
   {
     id: 'dest-4',
@@ -158,7 +187,13 @@ export const INITIAL_DESTINATIONS: Destination[] = [
     rating: 4.9,
     dailyCostsUsd: { backpacker: 110, explorer: 260, luxury: 680 },
     vibeTags: ['wildlife', 'safari', 'nature', 'adventure'],
-    coords: { lat: -2.3333, lng: 34.8333, svgX: 59.5, svgY: 62.0, flightFromNyc: '16.0 hrs', flightFromLondon: '10.5 hrs', distanceFromNycKm: 11940 }
+    coords: { lat: -2.3333, lng: 34.8333, svgX: 59.5, svgY: 62.0, flightFromNyc: '16.0 hrs', flightFromLondon: '10.5 hrs', distanceFromNycKm: 11940 },
+    climate: {
+      avgTempC: { spring: 26, summer: 24, autumn: 27, winter: 28 },
+      rainfallMm: { spring: 140, summer: 20, autumn: 50, winter: 90 },
+      bestMonths: '🦁 June - October (Great Migration)',
+      packingTip: 'Neutral-colored safari clothing, 10x42 binoculars, wide-brim hat, and bug spray.'
+    }
   }
 ];
 
@@ -174,26 +209,9 @@ export const INITIAL_POSTS: BlogPost[] = [
     excerpt: 'Stepping into the towering green bamboo stalks at dawn feels like walking into an otherworldly cathedral of nature.',
     coverImage: 'https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?w=800',
     content: [
-      'The morning air in Kyoto carries a quiet stillness that is difficult to find anywhere else on Earth. Standing at the entrance of Arashiyama Bamboo Grove just before sunrise, the first rays of light filter through towering green stalks.',
-      'As the wind blows gently, the rustling bamboo sways in a rhythmic natural symphony. It is one of Japan\'s designated 100 Soundscapes, encouraging visitors to pause and listen to the whisper of nature.'
+      'The morning air in Kyoto carries a quiet stillness that is difficult to find anywhere else on Earth.'
     ],
     tags: ['Japan', 'Kyoto', 'Nature'],
-    comments: []
-  },
-  {
-    id: 'post-2',
-    title: 'Chasing Sunsets in Oia: A Guide to Santorini Island',
-    slug: 'chasing-sunsets-in-oia-santorini',
-    destinationId: 'dest-2',
-    author: { name: 'Liam Sterling', avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150', role: 'Senior Photographer' },
-    publishedDate: '2026-07-18',
-    readTimeMinutes: 5,
-    excerpt: 'Discover the secret rooftop vantage points for watching the golden Aegean sunset over Oia’s iconic blue domes.',
-    coverImage: 'https://images.unsplash.com/photo-1570077188670-e3a8d69ac5ff?w=800',
-    content: [
-      'Santorini is famous worldwide for its dramatic caldera views, white cliffside buildings, and romantic evening sunsets.'
-    ],
-    tags: ['Greece', 'Island', 'Sunset'],
     comments: []
   }
 ];
@@ -207,8 +225,7 @@ export const QUIZ_QUESTIONS: QuizQuestion[] = [
     id: 1,
     question: 'What is your ideal travel atmosphere & scenery?',
     options: [
-      { label: 'Ancient Temples & Cultural Heritage', icon: '🏛️', vibe: 'culture' },
-      { label: 'Sun-kissed Beaches & Cliffside Views', icon: '🏖️', vibe: 'beach' }
+      { label: 'Ancient Temples & Cultural Heritage', icon: '🏛️', vibe: 'culture' }
     ]
   }
 ];
@@ -238,16 +255,6 @@ export const DEFAULT_ITINERARIES: Record<string, ItineraryDay[]> = {
       ]
     }
   ]
-};
-
-// Helper for LocalStorage
-const getStoredSavedPosts = (): string[] => {
-  try {
-    const raw = localStorage.getItem('travelpulse_saved_offline_posts');
-    return raw ? JSON.parse(raw) : ['post-1'];
-  } catch {
-    return ['post-1'];
-  }
 };
 
 export const useTravelStore = defineStore('travel', {
@@ -280,9 +287,12 @@ export const useTravelStore = defineStore('travel', {
     activeMapDestId: 'dest-1' as string,
     selectedOriginHub: 'NYC' as 'NYC' | 'London',
 
-    // Saved Offline Posts State
-    savedOfflinePostIds: getStoredSavedPosts() as string[],
-    readingProgress: {} as Record<string, number>
+    savedOfflinePostIds: ['post-1'] as string[],
+    readingProgress: {} as Record<string, number>,
+
+    // Weather & Climate Widget State
+    selectedSeason: 'spring' as SeasonKey,
+    tempUnit: 'C' as TempUnit
   }),
 
   getters: {
@@ -368,6 +378,16 @@ export const useTravelStore = defineStore('travel', {
 
     savedOfflinePosts: (state) => {
       return state.posts.filter((p) => state.savedOfflinePostIds.includes(p.id));
+    },
+
+    formatTemp: (state) => {
+      return (tempC: number): string => {
+        if (state.tempUnit === 'F') {
+          const tempF = Math.round((tempC * 9 / 5) + 32);
+          return `${tempF}°F`;
+        }
+        return `${tempC}°C`;
+      };
     }
   },
 
@@ -550,18 +570,12 @@ export const useTravelStore = defineStore('travel', {
       this.selectedOriginHub = hub;
     },
 
-    // Saved Offline Articles Actions
     toggleSaveOfflinePost(postId: string) {
       const idx = this.savedOfflinePostIds.indexOf(postId);
       if (idx > -1) {
         this.savedOfflinePostIds.splice(idx, 1);
       } else {
         this.savedOfflinePostIds.push(postId);
-      }
-      try {
-        localStorage.setItem('travelpulse_saved_offline_posts', JSON.stringify(this.savedOfflinePostIds));
-      } catch {
-        // Ignore Storage Errors
       }
     },
 
@@ -575,11 +589,15 @@ export const useTravelStore = defineStore('travel', {
 
     clearAllSavedOfflinePosts() {
       this.savedOfflinePostIds = [];
-      try {
-        localStorage.removeItem('travelpulse_saved_offline_posts');
-      } catch {
-        // Ignore Storage Errors
-      }
+    },
+
+    // Weather & Climate Actions
+    setSelectedSeason(season: SeasonKey) {
+      this.selectedSeason = season;
+    },
+
+    toggleTempUnit() {
+      this.tempUnit = this.tempUnit === 'C' ? 'F' : 'C';
     }
   }
 });
