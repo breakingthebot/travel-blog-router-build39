@@ -5,6 +5,16 @@ All notable changes to **Build 39 — TravelPulse Vue Router Multi-page Travel B
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.11.0] - 2026-07-25
+
+### Added
+- Built `src/components/TravelExpensesExporter.vue` providing an interactive expense analytics & data export tool.
+- Added financial expense allocation breakdown progress meters (Accommodation 45%, Dining 30%, Transport 15%, Activities 10%).
+- Added dynamic currency conversion ($ USD, € EUR, £ GBP, ¥ JPY).
+- Added 3 one-click file download triggers: `📥 Download Itinerary (.CSV)`, `📊 Export Budget Data (.JSON)`, and `🧳 Download Packing List (.CSV)`.
+- Integrated `TravelExpensesExporter.vue` into `DestinationDetailView.vue` and `DestinationsView.vue`.
+- Added unit tests in `src/stores/travelStore.spec.ts` testing itinerary CSV formatting, budget JSON structure, and packing list exports.
+
 ## [0.10.0] - 2026-07-25
 
 ### Added

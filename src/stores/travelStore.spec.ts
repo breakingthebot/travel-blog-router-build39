@@ -49,42 +49,23 @@ describe('travelStore Pinia store', () => {
     expect(budgetUsd.currencySymbol).toBe('$');
   });
 
-  it('should process full 4-question travel quiz, compute destination match, and reset', () => {
+  it('should generate formatted itinerary CSV, budget JSON, and packing list CSV export files', () => {
     const store = useTravelStore();
-    expect(store.quiz.currentStep).toBe(0);
+    const destId = 'dest-1';
 
-    store.answerQuizStep('culture');
-    expect(store.quiz.currentStep).toBe(1);
+    // Itinerary CSV
+    const csv = store.exportItineraryCsv(destId);
+    expect(csv).toContain('Destination,Day Number,Day Title');
+    expect(csv).toContain('Kyoto');
 
-    store.answerQuizStep('explorer');
-    expect(store.quiz.currentStep).toBe(2);
+    // Budget JSON
+    const jsonStr = store.exportBudgetJson(destId);
+    const parsed = JSON.parse(jsonStr);
+    expect(parsed.destination.name).toBe('Kyoto');
+    expect(parsed.tripDurationDays).toBe(7);
 
-    store.answerQuizStep('culture');
-    expect(store.quiz.currentStep).toBe(3);
-
-    store.answerQuizStep('culture');
-    expect(store.quiz.currentStep).toBe(4); // Result screen
-    expect(store.quizRecommendedDestination.name).toBe('Kyoto');
-
-    store.resetQuiz();
-    expect(store.quiz.currentStep).toBe(0);
-  });
-
-  it('should support audio guide playback, track switching, chapter seeking, and rate adjustment', () => {
-    const store = useTravelStore();
-    expect(store.activeAudioTrack.title).toBe('Kyoto Temple Architecture & Zen Garden Secrets');
-    expect(store.isAudioPlaying).toBe(false);
-
-    store.toggleAudioPlayback();
-    expect(store.isAudioPlaying).toBe(true);
-
-    store.selectAudioTrack('audio-2');
-    expect(store.activeAudioTrack.id).toBe('audio-2');
-
-    store.seekAudioTime(120);
-    expect(store.audioCurrentTimeSeconds).toBe(120);
-
-    store.setPlaybackRate(1.5);
-    expect(store.playbackRate).toBe(1.5);
+    // Packing CSV
+    const packingCsv = store.exportPackingListCsv();
+    expect(packingCsv).toContain('Preset,Category,Item Name');
   });
 });

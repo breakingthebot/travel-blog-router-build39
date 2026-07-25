@@ -15,6 +15,7 @@ import TravelMapVisualizer from '../components/TravelMapVisualizer.vue';
 import WeatherClimateWidget from '../components/WeatherClimateWidget.vue';
 import UserTravelStories from '../components/UserTravelStories.vue';
 import AudioGuidePlayer from '../components/AudioGuidePlayer.vue';
+import TravelExpensesExporter from '../components/TravelExpensesExporter.vue';
 
 const route = useRoute();
 const travelStore = useTravelStore();
@@ -61,6 +62,7 @@ const relatedPosts = computed(() => {
         <ItineraryBuilder :destination-id="destination.id" class="margin-top-calc" />
         <UserTravelStories :destination-id="destination.id" class="margin-top-calc" />
         <TravelMapVisualizer :highlight-dest-id="destination.id" class="margin-top-calc" />
+        <TravelExpensesExporter :destination-id="destination.id" class="margin-top-calc" />
         <PackingChecklist class="margin-top-calc" />
       </div>
 

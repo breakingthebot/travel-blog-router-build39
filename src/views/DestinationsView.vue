@@ -14,6 +14,7 @@ import TravelMapVisualizer from '../components/TravelMapVisualizer.vue';
 import WeatherClimateWidget from '../components/WeatherClimateWidget.vue';
 import UserTravelStories from '../components/UserTravelStories.vue';
 import AudioGuidePlayer from '../components/AudioGuidePlayer.vue';
+import TravelExpensesExporter from '../components/TravelExpensesExporter.vue';
 
 const travelStore = useTravelStore();
 const regions = ['All', 'Europe', 'Asia', 'Africa', 'Americas'];
@@ -91,6 +92,11 @@ const regions = ['All', 'Europe', 'Asia', 'Africa', 'Americas'];
     <!-- Interactive Travel Map & Distance Matrix -->
     <section class="margin-top">
       <TravelMapVisualizer />
+    </section>
+
+    <!-- Expenses Analytics & Export Tool -->
+    <section class="margin-top">
+      <TravelExpensesExporter />
     </section>
 
     <!-- Interactive Budget Estimator Tool, Itinerary Planner & Packing Checklist -->

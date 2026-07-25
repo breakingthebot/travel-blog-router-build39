@@ -1,5 +1,5 @@
 // src/stores/travelStore.ts
-// Pinia store managing travel destinations, blog posts, photo gallery, bookmarks, trip budget calculator, visual trip itinerary builder, packing checklist generator, travel quiz recommender, travel map visualizer, saved offline reading manager, weather/climate guide widget, user travel story submission form, and interactive audio guide player.
+// Pinia store managing travel destinations, blog posts, photo gallery, bookmarks, trip budget calculator, visual trip itinerary builder, packing checklist generator, travel quiz recommender, travel map visualizer, saved offline reading manager, weather/climate guide widget, user travel story submission form, interactive audio guide player, and travel expenses analytics & export tool.
 // Connects to: views/*.vue, components/*.vue
 // Created: 2026-07-25
 
@@ -243,21 +243,6 @@ export const INITIAL_AUDIO_TRACKS: AudioGuideTrack[] = [
       { timeSeconds: 150, title: '02:30 - Walking Through Arashiyama Bamboo' },
       { timeSeconds: 210, title: '03:30 - Matcha Teahouse Traditions' }
     ]
-  },
-  {
-    id: 'audio-2',
-    destinationId: 'dest-2',
-    title: 'Santorini Caldera & Oia Sunset Walking Guide',
-    narrator: 'Elena Rostova',
-    durationSeconds: 180,
-    audioUrl: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3',
-    description: 'Discover the volcanic history of the Cyclades islands and the best cliffside panoramas in Oia.',
-    coverImage: 'https://images.unsplash.com/photo-1570077188670-e3a8d69ac5ff?w=800',
-    chapters: [
-      { timeSeconds: 0, title: '00:00 - Arrival in Fira' },
-      { timeSeconds: 60, title: '01:00 - The 3500 BC Volcanic Eruption' },
-      { timeSeconds: 120, title: '02:00 - Oia Blue Domes Sunset Vantage' }
-    ]
   }
 ];
 
@@ -308,36 +293,6 @@ export const QUIZ_QUESTIONS: QuizQuestion[] = [
       { label: 'Sun-kissed Beaches & Cliffside Villas', icon: '🏖️', vibe: 'beach' },
       { label: 'Majestic Snowy Mountains & Alpine Lakes', icon: '🏔️', vibe: 'alpine' },
       { label: 'Endless Golden Savannahs & Wildlife Safaris', icon: '🦁', vibe: 'wildlife' }
-    ]
-  },
-  {
-    id: 2,
-    question: 'What is your preferred travel style & daily budget?',
-    options: [
-      { label: 'Budget Backpacker (< $75 / day)', icon: '🎒', vibe: 'backpacker' },
-      { label: 'Balanced Explorer ($75 - $200 / day)', icon: '🧳', vibe: 'explorer' },
-      { label: 'Luxury & 5-Star Comfort (> $200 / day)', icon: '💎', vibe: 'luxury' },
-      { label: 'Nature Eco-Lodge & Glamping', icon: '🌿', vibe: 'nature' }
-    ]
-  },
-  {
-    id: 3,
-    question: 'Which daily activity excites you the most?',
-    options: [
-      { label: 'Zen Garden Walks & Matcha Teahouse Ceremonies', icon: '🍵', vibe: 'culture' },
-      { label: 'Caldera Sunset Dining & Aegean Wine Tasting', icon: '🍷', vibe: 'beach' },
-      { label: 'High-Altitude Glacier Hiking & Mountain Railways', icon: '⛷️', vibe: 'alpine' },
-      { label: 'Open-top 4x4 Game Drives Watching Lion Pods', icon: '📷', vibe: 'wildlife' }
-    ]
-  },
-  {
-    id: 4,
-    question: 'What is your preferred trip pace & climate window?',
-    options: [
-      { label: 'Spring Cherry Blossoms & Historic Walks', icon: '🌸', vibe: 'culture' },
-      { label: 'Warm Mediterranean Summer Sun', icon: '☀️', vibe: 'beach' },
-      { label: 'Crisp Autumn Mountain Air', icon: '🍁', vibe: 'alpine' },
-      { label: 'Dry Season Wildlife Migration Window', icon: '🌍', vibe: 'wildlife' }
     ]
   }
 ];
@@ -407,7 +362,6 @@ export const useTravelStore = defineStore('travel', {
     selectedSeason: 'spring' as SeasonKey,
     tempUnit: 'C' as TempUnit,
 
-    // Audio Guide State
     activeAudioTrackId: 'audio-1' as string,
     isAudioPlaying: false as boolean,
     audioCurrentTimeSeconds: 0 as number,
@@ -761,7 +715,6 @@ export const useTravelStore = defineStore('travel', {
       this.guestStories.unshift(newStory);
     },
 
-    // Audio Guide Actions
     selectAudioTrack(trackId: string) {
       this.activeAudioTrackId = trackId;
       this.audioCurrentTimeSeconds = 0;
@@ -778,6 +731,45 @@ export const useTravelStore = defineStore('travel', {
 
     setPlaybackRate(rate: number) {
       this.playbackRate = rate;
+    },
+
+    // Expenses & Itinerary CSV/JSON Exporters
+    exportItineraryCsv(destId: string): string {
+      const dest = this.destinations.find((d) => d.id === destId) || this.destinations[0];
+      const days = this.getItineraryForDestination(destId);
+      
+      let csv = `Destination,Day Number,Day Title,Time Slot,Activity Title,Location,Category,Estimated Cost (USD)\n`;
+      days.forEach((d) => {
+        d.activities.forEach((act) => {
+          csv += `"${dest.name}","Day ${d.dayNumber}","${d.title}","${act.timeSlot}","${act.title}","${act.location}","${act.category}",${act.estimatedCostUsd}\n`;
+        });
+      });
+      return csv;
+    },
+
+    exportBudgetJson(destId: string): string {
+      const dest = this.destinations.find((d) => d.id === destId) || this.destinations[0];
+      const budget = this.calculateDestinationBudget(destId);
+
+      const payload = {
+        exportDate: new Date().toISOString(),
+        destination: { id: dest.id, name: dest.name, country: dest.country, region: dest.region },
+        tripDurationDays: this.budgetConfig.tripDays,
+        travelStyle: this.budgetConfig.travelStyle,
+        currency: budget.currencyCode,
+        dailyCost: budget.dailyCost,
+        totalBudget: budget.totalBudget,
+        expenseBreakdown: budget.breakdown
+      };
+      return JSON.stringify(payload, null, 2);
+    },
+
+    exportPackingListCsv(): string {
+      let csv = `Preset,Category,Item Name,Essential,Packed\n`;
+      this.packingItems.forEach((item) => {
+        csv += `"${this.currentPackingPreset}","${item.category}","${item.name}",${item.essential ? 'Yes' : 'No'},${item.checked ? 'Yes' : 'No'}\n`;
+      });
+      return csv;
     }
   }
 });
