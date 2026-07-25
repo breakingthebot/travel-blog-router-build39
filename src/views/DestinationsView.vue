@@ -18,6 +18,7 @@ import TravelExpensesExporter from '../components/TravelExpensesExporter.vue';
 import DestinationComparator from '../components/DestinationComparator.vue';
 import CurrencyCalculator from '../components/CurrencyCalculator.vue';
 import TravelPhrasebook from '../components/TravelPhrasebook.vue';
+import PassportTracker from '../components/PassportTracker.vue';
 
 const travelStore = useTravelStore();
 const regions = ['All', 'Europe', 'Asia', 'Africa', 'Americas'];
@@ -110,6 +111,11 @@ const regions = ['All', 'Europe', 'Asia', 'Africa', 'Americas'];
     <!-- Essential Travel Phrasebook -->
     <section class="margin-top">
       <TravelPhrasebook />
+    </section>
+
+    <!-- Digital Passport & Bucket List Badges -->
+    <section class="margin-top">
+      <PassportTracker />
     </section>
 
     <!-- Expenses Analytics & Export Tool -->

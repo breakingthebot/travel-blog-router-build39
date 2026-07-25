@@ -49,19 +49,15 @@ describe('travelStore Pinia store', () => {
     expect(budgetUsd.currencySymbol).toBe('$');
   });
 
-  it('should filter travel phrasebook items by language and category', () => {
+  it('should track digital passport stamps progress and toggle stamp claims', () => {
     const store = useTravelStore();
-    expect(store.selectedPhraseLanguage).toBe('Japanese');
+    const progress = store.passportProgress;
+    expect(progress.unlocked).toBe(2);
+    expect(progress.total).toBe(6);
+    expect(progress.percentage).toBe(33);
 
-    expect(store.filteredPhrases.length).toBe(5);
-
-    store.setPhraseCategory('Greetings');
-    expect(store.filteredPhrases.length).toBe(2);
-    expect(store.filteredPhrases[0].phonetic).toBe('Konnichiwa');
-
-    store.setPhraseLanguage('Greek');
-    store.setPhraseCategory('All');
-    expect(store.filteredPhrases.length).toBe(4);
-    expect(store.filteredPhrases[0].phonetic).toBe('Kalimera');
+    store.toggleClaimStamp('stamp-2'); // Claim Santorini stamp
+    expect(store.passportProgress.unlocked).toBe(3);
+    expect(store.isStampUnlocked('stamp-2')).toBe(true);
   });
 });

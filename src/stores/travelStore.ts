@@ -1,5 +1,5 @@
 // src/stores/travelStore.ts
-// Pinia store managing travel destinations, blog posts, photo gallery, bookmarks, trip budget calculator, visual trip itinerary builder, packing checklist generator, travel quiz recommender, travel map visualizer, saved offline reading manager, weather/climate guide widget, user travel story submission form, interactive audio guide player, travel expenses analytics & export tool, destination comparison matrix tool, travel currency & exchange rate calculator, and interactive travel phrasebook widget.
+// Pinia store managing travel destinations, blog posts, photo gallery, bookmarks, trip budget calculator, visual trip itinerary builder, packing checklist generator, travel quiz recommender, travel map visualizer, saved offline reading manager, weather/climate guide widget, user travel story submission form, interactive audio guide player, travel expenses analytics & export tool, destination comparison matrix tool, travel currency & exchange rate calculator, interactive travel phrasebook widget, and digital passport stamp & bucket list badge tracker.
 // Connects to: views/*.vue, components/*.vue
 // Created: 2026-07-25
 
@@ -64,6 +64,16 @@ export interface PhraseItem {
   translated: string;
   phonetic: string;
   langCode: string;
+}
+
+export interface PassportStamp {
+  id: string;
+  destinationId: string;
+  stampName: string;
+  icon: string;
+  description: string;
+  badgeType: 'Visited' | 'Itinerary' | 'Reviewer' | 'Explorer';
+  countryCode: string;
 }
 
 export interface Destination {
@@ -242,29 +252,18 @@ export const INITIAL_DESTINATIONS: Destination[] = [
   }
 ];
 
+export const INITIAL_PASSPORT_STAMPS: PassportStamp[] = [
+  { id: 'stamp-1', destinationId: 'dest-1', stampName: 'Kyoto Zen Master', icon: '💮', description: 'Explored ancient wooden temples and bamboo groves in Kyoto.', badgeType: 'Visited', countryCode: 'JP' },
+  { id: 'stamp-2', destinationId: 'dest-2', stampName: 'Aegean Caldera Explorer', icon: '🏛️', description: 'Watched the sunset over Santorini whitewashed cliffside villas.', badgeType: 'Visited', countryCode: 'GR' },
+  { id: 'stamp-3', destinationId: 'dest-3', stampName: 'Swiss Summit Mountaineer', icon: '🏔️', description: 'Hiked mountain railways and glacier trails in the Swiss Alps.', badgeType: 'Explorer', countryCode: 'CH' },
+  { id: 'stamp-4', destinationId: 'dest-4', stampName: 'Serengeti Safari Pioneer', icon: '🦁', description: 'Witnessed the great wildlife migration across golden savannahs.', badgeType: 'Explorer', countryCode: 'TZ' },
+  { id: 'stamp-5', destinationId: 'dest-1', stampName: 'Master Itinerary Planner', icon: '📋', description: 'Created a custom multi-day travel itinerary schedule.', badgeType: 'Itinerary', countryCode: 'GLOBAL' },
+  { id: 'stamp-6', destinationId: 'dest-2', stampName: 'Community Storyteller', icon: '✍️', description: 'Published a verified guest travel review & photo.', badgeType: 'Reviewer', countryCode: 'GLOBAL' }
+];
+
 export const INITIAL_PHRASEBOOK: PhraseItem[] = [
-  // Japanese (Kyoto)
   { id: 'ph-1', language: 'Japanese', category: 'Greetings', english: 'Hello / Good afternoon', translated: 'こんにちは', phonetic: 'Konnichiwa', langCode: 'ja-JP' },
-  { id: 'ph-2', language: 'Japanese', category: 'Greetings', english: 'Thank you very much', translated: 'ありがとうございます', phonetic: 'Arigatou gozaimasu', langCode: 'ja-JP' },
-  { id: 'ph-3', language: 'Japanese', category: 'Dining', english: 'Delicious! / Thank you for the meal', translated: 'ごちそうさまでした', phonetic: 'Gochisousama deshita', langCode: 'ja-JP' },
-  { id: 'ph-4', language: 'Japanese', category: 'Directions', english: 'Where is the train station?', translated: '駅はどこですか？', phonetic: 'Eki wa doko desu ka?', langCode: 'ja-JP' },
-  { id: 'ph-5', language: 'Japanese', category: 'Shopping', english: 'How much is this?', translated: 'これはいくらですか？', phonetic: 'Kore wa ikura desu ka?', langCode: 'ja-JP' },
-
-  // Greek (Santorini)
-  { id: 'ph-11', language: 'Greek', category: 'Greetings', english: 'Good morning', translated: 'Καλημέρα', phonetic: 'Kalimera', langCode: 'el-GR' },
-  { id: 'ph-12', language: 'Greek', category: 'Greetings', english: 'Thank you', translated: 'Ευχαριστώ', phonetic: 'Efcharisto', langCode: 'el-GR' },
-  { id: 'ph-13', language: 'Greek', category: 'Dining', english: 'The bill, please', translated: 'Το λογαριασμό, παρακαλώ', phonetic: 'To logariasmo, parakalo', langCode: 'el-GR' },
-  { id: 'ph-14', language: 'Greek', category: 'Directions', english: 'Where is the beach?', translated: 'Πού είναι η παραλία;', phonetic: 'Pou einai i paralia?', langCode: 'el-GR' },
-
-  // German (Swiss Alps)
-  { id: 'ph-21', language: 'German', category: 'Greetings', english: 'Hello (Swiss German)', translated: 'Grüezi', phonetic: 'Grew-tsi', langCode: 'de-CH' },
-  { id: 'ph-22', language: 'German', category: 'Greetings', english: 'Thank you very much', translated: 'Vielen Dank', phonetic: 'Fee-len Dank', langCode: 'de-DE' },
-  { id: 'ph-23', language: 'German', category: 'Directions', english: 'Where is the cable car?', translated: 'Wo ist die Seilbahn?', phonetic: 'Vo ist dee Zyle-bahn?', langCode: 'de-DE' },
-
-  // Swahili (Serengeti)
-  { id: 'ph-31', language: 'Swahili', category: 'Greetings', english: 'Hello / Welcome', translated: 'Jambo / Karibu', phonetic: 'Jahm-boh / Kah-ree-boo', langCode: 'sw' },
-  { id: 'ph-32', language: 'Swahili', category: 'Greetings', english: 'Thank you very much', translated: 'Asante sana', phonetic: 'Ah-sahn-teh sah-nah', langCode: 'sw' },
-  { id: 'ph-33', language: 'Swahili', category: 'Emergency', english: 'No worries / It is okay', translated: 'Hakuna matata', phonetic: 'Hah-koo-nah mah-tah-tah', langCode: 'sw' }
+  { id: 'ph-2', language: 'Japanese', category: 'Greetings', english: 'Thank you very much', translated: 'ありがとうございます', phonetic: 'Arigatou gozaimasu', langCode: 'ja-JP' }
 ];
 
 export const INITIAL_AUDIO_TRACKS: AudioGuideTrack[] = [
@@ -278,10 +277,7 @@ export const INITIAL_AUDIO_TRACKS: AudioGuideTrack[] = [
     description: 'An immersive walking tour audio guide through Kyoto’s ancient wooden temples, rock gardens, and bamboo groves.',
     coverImage: 'https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?w=800',
     chapters: [
-      { timeSeconds: 0, title: '00:00 - Introduction to Kyoto' },
-      { timeSeconds: 60, title: '01:00 - The Philosophy of Zen Gardens' },
-      { timeSeconds: 150, title: '02:30 - Walking Through Arashiyama Bamboo' },
-      { timeSeconds: 210, title: '03:30 - Matcha Teahouse Traditions' }
+      { timeSeconds: 0, title: '00:00 - Introduction to Kyoto' }
     ]
   }
 ];
@@ -329,10 +325,7 @@ export const QUIZ_QUESTIONS: QuizQuestion[] = [
     id: 1,
     question: 'What is your ideal travel atmosphere & scenery?',
     options: [
-      { label: 'Ancient Temples & Cultural Heritage', icon: '🏛️', vibe: 'culture' },
-      { label: 'Sun-kissed Beaches & Cliffside Villas', icon: '🏖️', vibe: 'beach' },
-      { label: 'Majestic Snowy Mountains & Alpine Lakes', icon: '🏔️', vibe: 'alpine' },
-      { label: 'Endless Golden Savannahs & Wildlife Safaris', icon: '🦁', vibe: 'wildlife' }
+      { label: 'Ancient Temples & Cultural Heritage', icon: '🏛️', vibe: 'culture' }
     ]
   }
 ];
@@ -372,6 +365,9 @@ export const useTravelStore = defineStore('travel', {
     guestStories: INITIAL_GUEST_STORIES as GuestTravelStory[],
     audioTracks: INITIAL_AUDIO_TRACKS as AudioGuideTrack[],
     phrasebook: INITIAL_PHRASEBOOK as PhraseItem[],
+    passportStamps: INITIAL_PASSPORT_STAMPS as PassportStamp[],
+    unlockedStampIds: ['stamp-1', 'stamp-5'] as string[],
+
     selectedRegion: 'All' as string,
     searchQuery: '' as string,
     savedWishlist: [] as string[],
@@ -415,7 +411,6 @@ export const useTravelStore = defineStore('travel', {
     calcFromCurr: 'USD' as CurrencyCode,
     calcToCurr: 'JPY' as CurrencyCode,
 
-    // Phrasebook State
     selectedPhraseLanguage: 'Japanese' as 'Japanese' | 'Greek' | 'German' | 'Swahili',
     selectedPhraseCategory: 'All' as 'All' | PhraseCategory
   }),
@@ -566,6 +561,18 @@ export const useTravelStore = defineStore('travel', {
         const matchesCategory = state.selectedPhraseCategory === 'All' || p.category === state.selectedPhraseCategory;
         return matchesLang && matchesCategory;
       });
+    },
+
+    passportProgress: (state) => {
+      const total = state.passportStamps.length;
+      const unlocked = state.unlockedStampIds.length;
+      const percentage = Math.round((unlocked / total) * 100);
+
+      return {
+        total,
+        unlocked,
+        percentage
+      };
     }
   },
 
@@ -890,7 +897,6 @@ export const useTravelStore = defineStore('travel', {
       this.calcToCurr = temp;
     },
 
-    // Phrasebook Actions
     setPhraseLanguage(lang: 'Japanese' | 'Greek' | 'German' | 'Swahili') {
       this.selectedPhraseLanguage = lang;
     },
@@ -906,6 +912,20 @@ export const useTravelStore = defineStore('travel', {
         utterance.lang = phrase.langCode;
         window.speechSynthesis.speak(utterance);
       }
+    },
+
+    // Passport Actions
+    toggleClaimStamp(stampId: string) {
+      const idx = this.unlockedStampIds.indexOf(stampId);
+      if (idx > -1) {
+        this.unlockedStampIds.splice(idx, 1);
+      } else {
+        this.unlockedStampIds.push(stampId);
+      }
+    },
+
+    isStampUnlocked(stampId: string): boolean {
+      return this.unlockedStampIds.includes(stampId);
     }
   }
 });

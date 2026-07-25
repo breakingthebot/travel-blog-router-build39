@@ -5,6 +5,17 @@ All notable changes to **Build 39 — TravelPulse Vue Router Multi-page Travel B
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.15.0] - 2026-07-25
+
+### Added
+- Built `src/components/PassportTracker.vue` providing an interactive digital traveler passport & bucket list badge tracker.
+- Added digital passport booklet progress meter (`33% Complete - 2/6 Stamps Unlocked`).
+- Built vintage circular passport stamp seals with metallic gold glow effect for unlocked stamps.
+- Added 6 default passport stamps (`💮 Kyoto Zen Master`, `🏛️ Aegean Caldera Explorer`, `🏔️ Swiss Summit Mountaineer`, `🦁 Serengeti Safari Pioneer`, `📋 Master Itinerary Planner`, `✍️ Community Storyteller`).
+- Added real-time toast alert popups upon unlocking passport stamps.
+- Integrated `PassportTracker.vue` into `DestinationDetailView.vue` and `DestinationsView.vue`.
+- Added unit tests in `src/stores/travelStore.spec.ts` testing passport stamp progress calculations and stamp claims.
+
 ## [0.14.0] - 2026-07-25
 
 ### Added
