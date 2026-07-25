@@ -16,6 +16,7 @@ import UserTravelStories from '../components/UserTravelStories.vue';
 import AudioGuidePlayer from '../components/AudioGuidePlayer.vue';
 import TravelExpensesExporter from '../components/TravelExpensesExporter.vue';
 import DestinationComparator from '../components/DestinationComparator.vue';
+import CurrencyCalculator from '../components/CurrencyCalculator.vue';
 
 const travelStore = useTravelStore();
 const regions = ['All', 'Europe', 'Asia', 'Africa', 'Americas'];
@@ -98,6 +99,11 @@ const regions = ['All', 'Europe', 'Asia', 'Africa', 'Americas'];
     <!-- Destination Comparison Matrix Tool -->
     <section class="margin-top">
       <DestinationComparator />
+    </section>
+
+    <!-- Travel Currency & Exchange Rate Calculator -->
+    <section class="margin-top">
+      <CurrencyCalculator />
     </section>
 
     <!-- Expenses Analytics & Export Tool -->

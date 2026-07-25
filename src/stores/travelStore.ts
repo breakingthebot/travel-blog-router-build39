@@ -1,5 +1,5 @@
 // src/stores/travelStore.ts
-// Pinia store managing travel destinations, blog posts, photo gallery, bookmarks, trip budget calculator, visual trip itinerary builder, packing checklist generator, travel quiz recommender, travel map visualizer, saved offline reading manager, weather/climate guide widget, user travel story submission form, interactive audio guide player, travel expenses analytics & export tool, and destination comparison matrix tool.
+// Pinia store managing travel destinations, blog posts, photo gallery, bookmarks, trip budget calculator, visual trip itinerary builder, packing checklist generator, travel quiz recommender, travel map visualizer, saved offline reading manager, weather/climate guide widget, user travel story submission form, interactive audio guide player, travel expenses analytics & export tool, destination comparison matrix tool, and travel currency & exchange rate calculator.
 // Connects to: views/*.vue, components/*.vue
 // Created: 2026-07-25
 
@@ -131,14 +131,17 @@ export interface QuizQuestion {
 }
 
 export type TravelStyle = 'backpacker' | 'explorer' | 'luxury';
-export type CurrencyCode = 'USD' | 'EUR' | 'GBP' | 'JPY';
+export type CurrencyCode = 'USD' | 'EUR' | 'GBP' | 'JPY' | 'AUD' | 'CAD' | 'CHF';
 export type TempUnit = 'C' | 'F';
 
-export const CURRENCY_RATES: Record<CurrencyCode, { symbol: string; rateFromUsd: number }> = {
-  USD: { symbol: '$', rateFromUsd: 1.0 },
-  EUR: { symbol: '€', rateFromUsd: 0.92 },
-  GBP: { symbol: '£', rateFromUsd: 0.78 },
-  JPY: { symbol: '¥', rateFromUsd: 155.0 }
+export const CURRENCY_RATES: Record<CurrencyCode, { symbol: string; name: string; flag: string; rateFromUsd: number }> = {
+  USD: { symbol: '$', name: 'US Dollar', flag: '🇺🇸', rateFromUsd: 1.0 },
+  EUR: { symbol: '€', name: 'Euro', flag: '🇪🇺', rateFromUsd: 0.92 },
+  GBP: { symbol: '£', name: 'British Pound', flag: '🇬🇧', rateFromUsd: 0.78 },
+  JPY: { symbol: '¥', name: 'Japanese Yen', flag: '🇯🇵', rateFromUsd: 155.0 },
+  AUD: { symbol: 'A$', name: 'Australian Dollar', flag: '🇦🇺', rateFromUsd: 1.52 },
+  CAD: { symbol: 'C$', name: 'Canadian Dollar', flag: '🇨🇦', rateFromUsd: 1.36 },
+  CHF: { symbol: 'CHF', name: 'Swiss Franc', flag: '🇨🇭', rateFromUsd: 0.89 }
 };
 
 export const INITIAL_DESTINATIONS: Destination[] = [
@@ -367,9 +370,13 @@ export const useTravelStore = defineStore('travel', {
     audioCurrentTimeSeconds: 0 as number,
     playbackRate: 1.0 as number,
 
-    // Destination Comparator State
     compareDestIdA: 'dest-1' as string,
-    compareDestIdB: 'dest-2' as string
+    compareDestIdB: 'dest-2' as string,
+
+    // Currency Calculator State
+    calcAmount: 500 as number,
+    calcFromCurr: 'USD' as CurrencyCode,
+    calcToCurr: 'JPY' as CurrencyCode
   }),
 
   getters: {
@@ -491,6 +498,25 @@ export const useTravelStore = defineStore('travel', {
 
     compareDestinationB: (state) => {
       return state.destinations.find((d) => d.id === state.compareDestIdB) || state.destinations[1];
+    },
+
+    convertedCurrencyResult: (state) => {
+      const fromInfo = CURRENCY_RATES[state.calcFromCurr];
+      const toInfo = CURRENCY_RATES[state.calcToCurr];
+
+      const amountInUsd = state.calcAmount / fromInfo.rateFromUsd;
+      const converted = amountInUsd * toInfo.rateFromUsd;
+      const rateFormula = (toInfo.rateFromUsd / fromInfo.rateFromUsd).toFixed(4);
+
+      return {
+        amount: state.calcAmount,
+        fromSymbol: fromInfo.symbol,
+        fromCode: state.calcFromCurr,
+        toSymbol: toInfo.symbol,
+        toCode: state.calcToCurr,
+        convertedValue: Math.round(converted * 100) / 100,
+        rateText: `1 ${state.calcFromCurr} = ${rateFormula} ${state.calcToCurr}`
+      };
     }
   },
 
@@ -783,7 +809,6 @@ export const useTravelStore = defineStore('travel', {
       return csv;
     },
 
-    // Destination Comparator Actions
     setCompareDestinationA(destId: string) {
       this.compareDestIdA = destId;
     },
@@ -796,6 +821,25 @@ export const useTravelStore = defineStore('travel', {
       const temp = this.compareDestIdA;
       this.compareDestIdA = this.compareDestIdB;
       this.compareDestIdB = temp;
+    },
+
+    // Currency Calculator Actions
+    setCalcAmount(amount: number) {
+      this.calcAmount = Math.max(0, amount);
+    },
+
+    setCalcFromCurr(curr: CurrencyCode) {
+      this.calcFromCurr = curr;
+    },
+
+    setCalcToCurr(curr: CurrencyCode) {
+      this.calcToCurr = curr;
+    },
+
+    swapCalcCurrencies() {
+      const temp = this.calcFromCurr;
+      this.calcFromCurr = this.calcToCurr;
+      this.calcToCurr = temp;
     }
   }
 });

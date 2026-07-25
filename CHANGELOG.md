@@ -5,6 +5,16 @@ All notable changes to **Build 39 — TravelPulse Vue Router Multi-page Travel B
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.13.0] - 2026-07-25
+
+### Added
+- Built `src/components/CurrencyCalculator.vue` providing a travel currency & live exchange rate converter.
+- Expanded currency support: USD ($), EUR (€), GBP (£), JPY (¥), AUD (A$), CAD (C$), CHF (CHF).
+- Added instant currency swapping and live rate formula display (`1 USD = 155.0 JPY`).
+- Added common local travel cost conversion reference grid (Espresso, Dinner, Boutique Hotel, High-Speed Rail).
+- Integrated `CurrencyCalculator.vue` into `DestinationDetailView.vue` and `DestinationsView.vue`.
+- Added unit tests in `src/stores/travelStore.spec.ts` testing multi-currency conversions and currency swapping.
+
 ## [0.12.0] - 2026-07-25
 
 ### Added

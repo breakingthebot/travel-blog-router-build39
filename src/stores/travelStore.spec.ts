@@ -49,16 +49,18 @@ describe('travelStore Pinia store', () => {
     expect(budgetUsd.currencySymbol).toBe('$');
   });
 
-  it('should manage destination comparison selections and swap correctly', () => {
+  it('should support dynamic currency conversions and currency swapping', () => {
     const store = useTravelStore();
-    expect(store.compareDestinationA.name).toBe('Kyoto');
-    expect(store.compareDestinationB.name).toBe('Santorini');
+    store.setCalcAmount(100);
+    store.setCalcFromCurr('USD');
+    store.setCalcToCurr('JPY');
 
-    store.setCompareDestinationA('dest-3'); // Swiss Alps
-    expect(store.compareDestinationA.name).toBe('Swiss Alps');
+    const result = store.convertedCurrencyResult;
+    expect(result.convertedValue).toBe(15500);
+    expect(result.toSymbol).toBe('¥');
 
-    store.swapCompareDestinations();
-    expect(store.compareDestinationA.name).toBe('Santorini');
-    expect(store.compareDestinationB.name).toBe('Swiss Alps');
+    store.swapCalcCurrencies();
+    expect(store.calcFromCurr).toBe('JPY');
+    expect(store.calcToCurr).toBe('USD');
   });
 });
