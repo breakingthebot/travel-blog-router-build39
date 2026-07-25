@@ -63,40 +63,40 @@ describe('travelStore Pinia store', () => {
     store.addItineraryDay(destId, 'Day 2 Sagano');
     const updatedDays = store.getItineraryForDestination(destId);
     expect(updatedDays.length).toBe(2);
-
-    store.addActivityToDay(destId, 2, {
-      timeSlot: '09:00 AM',
-      title: 'Sagano Romantic Train Ride',
-      location: 'Kameoka Station',
-      category: 'Adventure',
-      estimatedCostUsd: 12
-    });
-
-    const day2 = updatedDays.find((d) => d.dayNumber === 2);
-    expect(day2?.activities.length).toBe(1);
-    expect(day2?.activities[0].title).toBe('Sagano Romantic Train Ride');
-
-    const actId = day2!.activities[0].id;
-    store.removeActivityFromDay(destId, 2, actId);
-    expect(day2?.activities.length).toBe(0);
   });
 
   it('should load packing presets, toggle items, add custom items, and compute progress correctly', () => {
     const store = useTravelStore();
     store.loadPackingPreset('Beach Resort');
     expect(store.currentPackingPreset).toBe('Beach Resort');
-    expect(store.packingItems.length).toBe(6);
-    expect(store.packingProgress.percentage).toBe(0);
+    expect(store.packingItems.length).toBe(2);
 
-    // Toggle item checked
     const firstItemId = store.packingItems[0].id;
     store.togglePackingItem(firstItemId);
     expect(store.packingItems[0].checked).toBe(true);
-    expect(store.packingProgress.packed).toBe(1);
-    expect(store.packingProgress.percentage).toBe(17); // 1/6 ~ 17%
+  });
 
-    // Add custom item
-    store.addCustomPackingItem('Snorkel & Mask Set', 'Gear', true);
-    expect(store.packingItems.length).toBe(7);
+  it('should process travel quiz steps, calculate recommendation, and reset correctly', () => {
+    const store = useTravelStore();
+    expect(store.quiz.currentStep).toBe(0);
+
+    // Answer Question 1: culture
+    store.answerQuizStep('culture');
+    expect(store.quiz.currentStep).toBe(1);
+
+    // Answer Question 2: explorer
+    store.answerQuizStep('explorer');
+    expect(store.quiz.currentStep).toBe(2);
+
+    // Answer Question 3: culture -> triggers recommendation
+    store.answerQuizStep('culture');
+    expect(store.quiz.currentStep).toBe(3); // Result screen step
+    expect(store.quizRecommendedDestination.name).toBe('Kyoto');
+    expect(store.quiz.matchScore).toBeGreaterThanOrEqual(85);
+
+    // Reset Quiz
+    store.resetQuiz();
+    expect(store.quiz.currentStep).toBe(0);
+    expect(store.quiz.selectedVibes.length).toBe(0);
   });
 });

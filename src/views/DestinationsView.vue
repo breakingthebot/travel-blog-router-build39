@@ -9,6 +9,7 @@ import DestinationCard from '../components/DestinationCard.vue';
 import BudgetCalculator from '../components/BudgetCalculator.vue';
 import ItineraryBuilder from '../components/ItineraryBuilder.vue';
 import PackingChecklist from '../components/PackingChecklist.vue';
+import TravelQuiz from '../components/TravelQuiz.vue';
 
 const travelStore = useTravelStore();
 const regions = ['All', 'Europe', 'Asia', 'Africa', 'Americas'];
@@ -62,6 +63,11 @@ const regions = ['All', 'Europe', 'Asia', 'Africa', 'Americas'];
         Reset Search Filters
       </button>
     </div>
+
+    <!-- Interactive Travel Quiz Section -->
+    <section class="margin-bottom-calc">
+      <TravelQuiz />
+    </section>
 
     <!-- Interactive Budget Estimator Tool, Itinerary Planner & Packing Checklist -->
     <section class="budget-section margin-top">

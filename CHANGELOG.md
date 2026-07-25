@@ -5,6 +5,17 @@ All notable changes to **Build 39 — TravelPulse Vue Router Multi-page Travel B
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.5.0] - 2026-07-25
+
+### Added
+- Built `src/components/TravelQuiz.vue` providing an interactive multi-step travel destination recommendation quiz.
+- Added step progress indicator (Step 1 of 3, Step 2 of 3, Step 3 of 3).
+- Added interactive visual option cards with icons and smooth select effects.
+- Built Quiz Result screen calculating match score percentage (e.g. `96% Match!`) and displaying a recommended destination showcase card.
+- Added direct router link button to open the recommended destination guide & itinerary.
+- Integrated `TravelQuiz.vue` into `HomeView.vue` and `DestinationsView.vue`.
+- Added unit tests in `src/stores/travelStore.spec.ts` testing quiz step progression, vibe matching, recommendation calculations, and quiz resets.
+
 ## [0.4.0] - 2026-07-25
 
 ### Added

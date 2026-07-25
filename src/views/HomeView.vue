@@ -7,6 +7,7 @@
 import { useTravelStore } from '../stores/travelStore';
 import DestinationCard from '../components/DestinationCard.vue';
 import PostCard from '../components/PostCard.vue';
+import TravelQuiz from '../components/TravelQuiz.vue';
 
 const travelStore = useTravelStore();
 </script>
@@ -48,6 +49,11 @@ const travelStore = useTravelStore();
           :destination="dest"
         />
       </div>
+    </section>
+
+    <!-- Interactive Destination Recommender Quiz Section -->
+    <section class="section">
+      <TravelQuiz />
     </section>
 
     <!-- Latest Journal Posts Section -->

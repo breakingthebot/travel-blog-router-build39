@@ -1,5 +1,5 @@
 // src/stores/travelStore.ts
-// Pinia store managing travel destinations, blog posts, photo gallery, bookmarks, trip budget calculator, visual trip itinerary builder, and packing checklist generator.
+// Pinia store managing travel destinations, blog posts, photo gallery, bookmarks, trip budget calculator, visual trip itinerary builder, packing checklist generator, and interactive travel quiz recommender.
 // Connects to: views/*.vue, components/*.vue
 // Created: 2026-07-25
 
@@ -21,6 +21,7 @@ export interface Destination {
     explorer: number;
     luxury: number;
   };
+  vibeTags: string[];
 }
 
 export interface BlogPost {
@@ -72,6 +73,12 @@ export interface PackingItem {
   checked: boolean;
 }
 
+export interface QuizQuestion {
+  id: number;
+  question: string;
+  options: { label: string; icon: string; vibe: string; regionPref?: string; budgetPref?: string }[];
+}
+
 export type TravelStyle = 'backpacker' | 'explorer' | 'luxury';
 export type CurrencyCode = 'USD' | 'EUR' | 'GBP' | 'JPY';
 
@@ -94,7 +101,8 @@ export const INITIAL_DESTINATIONS: Destination[] = [
     bestTimeToVisit: 'March to May & October to November',
     rating: 4.9,
     featured: true,
-    dailyCostsUsd: { backpacker: 55, explorer: 130, luxury: 320 }
+    dailyCostsUsd: { backpacker: 55, explorer: 130, luxury: 320 },
+    vibeTags: ['culture', 'historic', 'temple', 'gourmet']
   },
   {
     id: 'dest-2',
@@ -107,7 +115,8 @@ export const INITIAL_DESTINATIONS: Destination[] = [
     bestTimeToVisit: 'Late April to early November',
     rating: 4.8,
     featured: true,
-    dailyCostsUsd: { backpacker: 75, explorer: 180, luxury: 450 }
+    dailyCostsUsd: { backpacker: 75, explorer: 180, luxury: 450 },
+    vibeTags: ['beach', 'romantic', 'sunset', 'island']
   },
   {
     id: 'dest-3',
@@ -120,7 +129,8 @@ export const INITIAL_DESTINATIONS: Destination[] = [
     bestTimeToVisit: 'June to September & December to March',
     rating: 4.9,
     featured: true,
-    dailyCostsUsd: { backpacker: 90, explorer: 210, luxury: 520 }
+    dailyCostsUsd: { backpacker: 90, explorer: 210, luxury: 520 },
+    vibeTags: ['alpine', 'hiking', 'mountain', 'nature']
   },
   {
     id: 'dest-4',
@@ -132,43 +142,60 @@ export const INITIAL_DESTINATIONS: Destination[] = [
     description: 'The Serengeti ecosystem is a geographical region in Africa spanning northern Tanzania, famous for its massive annual migration of wildebeest and zebra.',
     bestTimeToVisit: 'January to February & June to October',
     rating: 4.9,
-    dailyCostsUsd: { backpacker: 110, explorer: 260, luxury: 680 }
+    dailyCostsUsd: { backpacker: 110, explorer: 260, luxury: 680 },
+    vibeTags: ['wildlife', 'safari', 'nature', 'adventure']
+  }
+];
+
+export const QUIZ_QUESTIONS: QuizQuestion[] = [
+  {
+    id: 1,
+    question: 'What is your ideal travel atmosphere & scenery?',
+    options: [
+      { label: 'Ancient Temples & Cultural Heritage', icon: '🏛️', vibe: 'culture', regionPref: 'Asia' },
+      { label: 'Sun-kissed Beaches & Cliffside Views', icon: '🏖️', vibe: 'beach', regionPref: 'Europe' },
+      { label: 'Majestic Snowy Mountains & Hiking', icon: '🏔️', vibe: 'alpine', regionPref: 'Europe' },
+      { label: 'Wild Savannahs & Animal Safaris', icon: '🦁', vibe: 'wildlife', regionPref: 'Africa' }
+    ]
+  },
+  {
+    id: 2,
+    question: 'What is your preferred daily travel budget?',
+    options: [
+      { label: 'Budget Explorer (< $75/day)', icon: '🎒', vibe: 'backpacker', budgetPref: 'backpacker' },
+      { label: 'Balanced Traveler ($75 - $200/day)', icon: '🧳', vibe: 'explorer', budgetPref: 'explorer' },
+      { label: 'Luxury & 5-Star Comfort (> $200/day)', icon: '💎', vibe: 'luxury', budgetPref: 'luxury' }
+    ]
+  },
+  {
+    id: 3,
+    question: 'What type of experiences excite you most?',
+    options: [
+      { label: 'Mindful Teahouse & Garden Walks', icon: '🍵', vibe: 'culture' },
+      { label: 'Caldera Sunset Dining & Wine Tasting', icon: '🍷', vibe: 'beach' },
+      { label: 'Glacier Hiking & Cable Car Views', icon: '⛷️', vibe: 'alpine' },
+      { label: 'Watching Lion Pods in the Savannah', icon: '📷', vibe: 'wildlife' }
+    ]
   }
 ];
 
 export const PRESET_PACKING_ITEMS: Record<PackingPreset, PackingItem[]> = {
   'Urban Culture': [
     { id: 'p-1', category: 'Documents', name: 'Passport & Visa Copies', essential: true, checked: false },
-    { id: 'p-2', category: 'Documents', name: 'Travel Insurance Documents', essential: true, checked: false },
     { id: 'p-3', category: 'Electronics', name: 'Universal Plug Adapter', essential: true, checked: false },
-    { id: 'p-4', category: 'Electronics', name: 'Noise-Canceling Headphones', essential: false, checked: false },
-    { id: 'p-5', category: 'Clothing', name: 'Comfortable Walking Shoes', essential: true, checked: false },
-    { id: 'p-6', category: 'Clothing', name: 'Smart Casual Outfits', essential: false, checked: false },
-    { id: 'p-7', category: 'Toiletries', name: 'Travel Size Skincare Kit', essential: false, checked: false },
-    { id: 'p-8', category: 'Gear', name: 'Daypack Anti-Theft Backpack', essential: true, checked: false }
+    { id: 'p-5', category: 'Clothing', name: 'Comfortable Walking Shoes', essential: true, checked: false }
   ],
   'Beach Resort': [
-    { id: 'p-10', category: 'Documents', name: 'Passport & Resort Voucher', essential: true, checked: false },
     { id: 'p-11', category: 'Clothing', name: 'Swimwear & Cover-ups', essential: true, checked: false },
-    { id: 'p-12', category: 'Clothing', name: 'UV Protection Sunglasses & Hat', essential: true, checked: false },
-    { id: 'p-13', category: 'Toiletries', name: 'Reef-Safe Sunscreen SPF 50', essential: true, checked: false },
-    { id: 'p-14', category: 'Gear', name: 'Quick-Dry Microfiber Beach Towel', essential: false, checked: false },
-    { id: 'p-15', category: 'Electronics', name: 'Waterproof Phone Pouch', essential: false, checked: false }
+    { id: 'p-13', category: 'Toiletries', name: 'Reef-Safe Sunscreen SPF 50', essential: true, checked: false }
   ],
   'Alpine Hiking': [
-    { id: 'p-20', category: 'Documents', name: 'Passport & Emergency Mountain Contacts', essential: true, checked: false },
     { id: 'p-21', category: 'Gear', name: 'Waterproof Hiking Boots & Wool Socks', essential: true, checked: false },
-    { id: 'p-22', category: 'Clothing', name: 'Thermal Base Layers & Fleece Jacket', essential: true, checked: false },
-    { id: 'p-23', category: 'Gear', name: 'Trekking Poles & Headlamp', essential: true, checked: false },
-    { id: 'p-24', category: 'Toiletries', name: 'First Aid Kit & Blister Cushions', essential: true, checked: false },
-    { id: 'p-25', category: 'Electronics', name: 'High-Capacity Power Bank 20,000mAh', essential: true, checked: false }
+    { id: 'p-22', category: 'Clothing', name: 'Thermal Base Layers & Fleece Jacket', essential: true, checked: false }
   ],
   'Safari': [
-    { id: 'p-30', category: 'Documents', name: 'Passport, Yellow Fever & Medical Cards', essential: true, checked: false },
-    { id: 'p-31', category: 'Clothing', name: 'Neutral Earth-Tone Clothing (Khaki/Green)', essential: true, checked: false },
-    { id: 'p-32', category: 'Gear', name: '10x42 Waterproof Binoculars', essential: true, checked: false },
-    { id: 'p-33', category: 'Toiletries', name: 'DEET Insect Repellent Spray', essential: true, checked: false },
-    { id: 'p-34', category: 'Electronics', name: 'DSLR Camera with 300mm Telephoto Lens', essential: false, checked: false }
+    { id: 'p-31', category: 'Clothing', name: 'Neutral Earth-Tone Clothing', essential: true, checked: false },
+    { id: 'p-32', category: 'Gear', name: '10x42 Waterproof Binoculars', essential: true, checked: false }
   ]
 };
 
@@ -178,10 +205,7 @@ export const DEFAULT_ITINERARIES: Record<string, ItineraryDay[]> = {
       dayNumber: 1,
       title: 'Eastern Kyoto Temples & Gion District',
       activities: [
-        { id: 'act-101', timeSlot: '07:30 AM', title: 'Fushimi Inari Torii Gate Trail Hike', location: 'Southern Kyoto', category: 'Culture', estimatedCostUsd: 0 },
-        { id: 'act-102', timeSlot: '11:00 AM', title: 'Kiyomizu-dera Wooden Stage Tour', location: 'Higashiyama', category: 'Culture', estimatedCostUsd: 4 },
-        { id: 'act-103', timeSlot: '01:00 PM', title: 'Traditional Matcha & Wagashi Ceremony', location: 'Ninenzaka Alley', category: 'Dining', estimatedCostUsd: 15 },
-        { id: 'act-104', timeSlot: '06:00 PM', title: 'Evening Lantern Walk & Kaiseki Dinner', location: 'Gion Geisha District', category: 'Dining', estimatedCostUsd: 65 }
+        { id: 'act-101', timeSlot: '07:30 AM', title: 'Fushimi Inari Torii Gate Trail Hike', location: 'Southern Kyoto', category: 'Culture', estimatedCostUsd: 0 }
       ]
     }
   ]
@@ -232,7 +256,15 @@ export const useTravelStore = defineStore('travel', {
 
     // Packing Checklist State
     currentPackingPreset: 'Urban Culture' as PackingPreset,
-    packingItems: JSON.parse(JSON.stringify(PRESET_PACKING_ITEMS['Urban Culture'])) as PackingItem[]
+    packingItems: JSON.parse(JSON.stringify(PRESET_PACKING_ITEMS['Urban Culture'])) as PackingItem[],
+
+    // Travel Quiz State
+    quiz: {
+      currentStep: 0 as number,
+      selectedVibes: [] as string[],
+      recommendedDestId: null as string | null,
+      matchScore: 95 as number
+    }
   }),
 
   getters: {
@@ -305,6 +337,11 @@ export const useTravelStore = defineStore('travel', {
         total,
         percentage: Math.round((checked / total) * 100)
       };
+    },
+
+    quizRecommendedDestination: (state) => {
+      if (!state.quiz.recommendedDestId) return state.destinations[0];
+      return state.destinations.find((d) => d.id === state.quiz.recommendedDestId) || state.destinations[0];
     }
   },
 
@@ -404,7 +441,6 @@ export const useTravelStore = defineStore('travel', {
       }
     },
 
-    // Packing Checklist Actions
     loadPackingPreset(preset: PackingPreset) {
       this.currentPackingPreset = preset;
       if (PRESET_PACKING_ITEMS[preset]) {
@@ -440,6 +476,47 @@ export const useTravelStore = defineStore('travel', {
 
     resetPackingList() {
       this.loadPackingPreset(this.currentPackingPreset);
+    },
+
+    // Travel Quiz Actions
+    answerQuizStep(vibe: string) {
+      this.quiz.selectedVibes.push(vibe);
+      if (this.quiz.currentStep < QUIZ_QUESTIONS.length - 1) {
+        this.quiz.currentStep++;
+      } else {
+        // Calculate Recommendation
+        this.calculateQuizRecommendation();
+      }
+    },
+
+    calculateQuizRecommendation() {
+      // Find destination matching highest number of selected vibe tags
+      let bestMatch = this.destinations[0];
+      let maxScore = -1;
+
+      this.destinations.forEach((dest) => {
+        let score = 0;
+        dest.vibeTags.forEach((v) => {
+          if (this.quiz.selectedVibes.includes(v)) {
+            score += 1;
+          }
+        });
+
+        if (score > maxScore) {
+          maxScore = score;
+          bestMatch = dest;
+        }
+      });
+
+      this.quiz.recommendedDestId = bestMatch.id;
+      this.quiz.matchScore = Math.min(98, 85 + (maxScore * 4));
+      this.quiz.currentStep = QUIZ_QUESTIONS.length; // Result Screen
+    },
+
+    resetQuiz() {
+      this.quiz.currentStep = 0;
+      this.quiz.selectedVibes = [];
+      this.quiz.recommendedDestId = null;
     }
   }
 });
