@@ -1,0 +1,9 @@
+AGENTS.md
+BUILD_NOTES.md
+.env
+.env.*
+!.env.example
+node_modules/
+dist/
+.DS_Store
+*.log
