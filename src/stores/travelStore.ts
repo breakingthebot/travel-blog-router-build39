@@ -1,5 +1,5 @@
 // src/stores/travelStore.ts
-// Pinia store managing travel destinations, blog posts, photo gallery, bookmarks, trip budget calculator, visual trip itinerary builder, packing checklist generator, travel quiz recommender, travel map visualizer, saved offline reading manager, weather/climate guide widget, user travel story submission form, interactive audio guide player, and travel expenses analytics & export tool.
+// Pinia store managing travel destinations, blog posts, photo gallery, bookmarks, trip budget calculator, visual trip itinerary builder, packing checklist generator, travel quiz recommender, travel map visualizer, saved offline reading manager, weather/climate guide widget, user travel story submission form, interactive audio guide player, travel expenses analytics & export tool, and destination comparison matrix tool.
 // Connects to: views/*.vue, components/*.vue
 // Created: 2026-07-25
 
@@ -365,7 +365,11 @@ export const useTravelStore = defineStore('travel', {
     activeAudioTrackId: 'audio-1' as string,
     isAudioPlaying: false as boolean,
     audioCurrentTimeSeconds: 0 as number,
-    playbackRate: 1.0 as number
+    playbackRate: 1.0 as number,
+
+    // Destination Comparator State
+    compareDestIdA: 'dest-1' as string,
+    compareDestIdB: 'dest-2' as string
   }),
 
   getters: {
@@ -479,6 +483,14 @@ export const useTravelStore = defineStore('travel', {
 
     activeAudioTrack: (state) => {
       return state.audioTracks.find((a) => a.id === state.activeAudioTrackId) || state.audioTracks[0];
+    },
+
+    compareDestinationA: (state) => {
+      return state.destinations.find((d) => d.id === state.compareDestIdA) || state.destinations[0];
+    },
+
+    compareDestinationB: (state) => {
+      return state.destinations.find((d) => d.id === state.compareDestIdB) || state.destinations[1];
     }
   },
 
@@ -733,7 +745,6 @@ export const useTravelStore = defineStore('travel', {
       this.playbackRate = rate;
     },
 
-    // Expenses & Itinerary CSV/JSON Exporters
     exportItineraryCsv(destId: string): string {
       const dest = this.destinations.find((d) => d.id === destId) || this.destinations[0];
       const days = this.getItineraryForDestination(destId);
@@ -770,6 +781,21 @@ export const useTravelStore = defineStore('travel', {
         csv += `"${this.currentPackingPreset}","${item.category}","${item.name}",${item.essential ? 'Yes' : 'No'},${item.checked ? 'Yes' : 'No'}\n`;
       });
       return csv;
+    },
+
+    // Destination Comparator Actions
+    setCompareDestinationA(destId: string) {
+      this.compareDestIdA = destId;
+    },
+
+    setCompareDestinationB(destId: string) {
+      this.compareDestIdB = destId;
+    },
+
+    swapCompareDestinations() {
+      const temp = this.compareDestIdA;
+      this.compareDestIdA = this.compareDestIdB;
+      this.compareDestIdB = temp;
     }
   }
 });

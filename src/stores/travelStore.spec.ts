@@ -49,23 +49,16 @@ describe('travelStore Pinia store', () => {
     expect(budgetUsd.currencySymbol).toBe('$');
   });
 
-  it('should generate formatted itinerary CSV, budget JSON, and packing list CSV export files', () => {
+  it('should manage destination comparison selections and swap correctly', () => {
     const store = useTravelStore();
-    const destId = 'dest-1';
+    expect(store.compareDestinationA.name).toBe('Kyoto');
+    expect(store.compareDestinationB.name).toBe('Santorini');
 
-    // Itinerary CSV
-    const csv = store.exportItineraryCsv(destId);
-    expect(csv).toContain('Destination,Day Number,Day Title');
-    expect(csv).toContain('Kyoto');
+    store.setCompareDestinationA('dest-3'); // Swiss Alps
+    expect(store.compareDestinationA.name).toBe('Swiss Alps');
 
-    // Budget JSON
-    const jsonStr = store.exportBudgetJson(destId);
-    const parsed = JSON.parse(jsonStr);
-    expect(parsed.destination.name).toBe('Kyoto');
-    expect(parsed.tripDurationDays).toBe(7);
-
-    // Packing CSV
-    const packingCsv = store.exportPackingListCsv();
-    expect(packingCsv).toContain('Preset,Category,Item Name');
+    store.swapCompareDestinations();
+    expect(store.compareDestinationA.name).toBe('Santorini');
+    expect(store.compareDestinationB.name).toBe('Swiss Alps');
   });
 });

@@ -5,6 +5,16 @@ All notable changes to **Build 39 — TravelPulse Vue Router Multi-page Travel B
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.12.0] - 2026-07-25
+
+### Added
+- Built `src/components/DestinationComparator.vue` providing a side-by-side destination comparison matrix tool.
+- Added side-by-side comparison metrics for daily backpacker/explorer/luxury costs, flight times & distances, best visiting seasons, ratings, and atmosphere vibe tags.
+- Added automated `💡 Cheaper` badge highlighting the cost winner between selected destinations.
+- Added quick `⇄ Swap` button and direct destination guide router links.
+- Integrated `DestinationComparator.vue` into `DestinationDetailView.vue` and `DestinationsView.vue`.
+- Added unit tests in `src/stores/travelStore.spec.ts` testing destination selection and swapping.
+
 ## [0.11.0] - 2026-07-25
 
 ### Added
