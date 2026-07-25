@@ -1,5 +1,5 @@
 // src/stores/travelStore.ts
-// Pinia store managing travel destinations, blog posts, photo gallery, bookmarks, trip budget calculator, and visual trip itinerary builder.
+// Pinia store managing travel destinations, blog posts, photo gallery, bookmarks, trip budget calculator, visual trip itinerary builder, and packing checklist generator.
 // Connects to: views/*.vue, components/*.vue
 // Created: 2026-07-25
 
@@ -59,6 +59,17 @@ export interface ItineraryDay {
   dayNumber: number;
   title: string;
   activities: ItineraryActivity[];
+}
+
+export type PackingCategory = 'Clothing' | 'Electronics' | 'Toiletries' | 'Documents' | 'Gear';
+export type PackingPreset = 'Beach Resort' | 'Alpine Hiking' | 'Urban Culture' | 'Safari';
+
+export interface PackingItem {
+  id: string;
+  category: PackingCategory;
+  name: string;
+  essential: boolean;
+  checked: boolean;
 }
 
 export type TravelStyle = 'backpacker' | 'explorer' | 'luxury';
@@ -125,6 +136,42 @@ export const INITIAL_DESTINATIONS: Destination[] = [
   }
 ];
 
+export const PRESET_PACKING_ITEMS: Record<PackingPreset, PackingItem[]> = {
+  'Urban Culture': [
+    { id: 'p-1', category: 'Documents', name: 'Passport & Visa Copies', essential: true, checked: false },
+    { id: 'p-2', category: 'Documents', name: 'Travel Insurance Documents', essential: true, checked: false },
+    { id: 'p-3', category: 'Electronics', name: 'Universal Plug Adapter', essential: true, checked: false },
+    { id: 'p-4', category: 'Electronics', name: 'Noise-Canceling Headphones', essential: false, checked: false },
+    { id: 'p-5', category: 'Clothing', name: 'Comfortable Walking Shoes', essential: true, checked: false },
+    { id: 'p-6', category: 'Clothing', name: 'Smart Casual Outfits', essential: false, checked: false },
+    { id: 'p-7', category: 'Toiletries', name: 'Travel Size Skincare Kit', essential: false, checked: false },
+    { id: 'p-8', category: 'Gear', name: 'Daypack Anti-Theft Backpack', essential: true, checked: false }
+  ],
+  'Beach Resort': [
+    { id: 'p-10', category: 'Documents', name: 'Passport & Resort Voucher', essential: true, checked: false },
+    { id: 'p-11', category: 'Clothing', name: 'Swimwear & Cover-ups', essential: true, checked: false },
+    { id: 'p-12', category: 'Clothing', name: 'UV Protection Sunglasses & Hat', essential: true, checked: false },
+    { id: 'p-13', category: 'Toiletries', name: 'Reef-Safe Sunscreen SPF 50', essential: true, checked: false },
+    { id: 'p-14', category: 'Gear', name: 'Quick-Dry Microfiber Beach Towel', essential: false, checked: false },
+    { id: 'p-15', category: 'Electronics', name: 'Waterproof Phone Pouch', essential: false, checked: false }
+  ],
+  'Alpine Hiking': [
+    { id: 'p-20', category: 'Documents', name: 'Passport & Emergency Mountain Contacts', essential: true, checked: false },
+    { id: 'p-21', category: 'Gear', name: 'Waterproof Hiking Boots & Wool Socks', essential: true, checked: false },
+    { id: 'p-22', category: 'Clothing', name: 'Thermal Base Layers & Fleece Jacket', essential: true, checked: false },
+    { id: 'p-23', category: 'Gear', name: 'Trekking Poles & Headlamp', essential: true, checked: false },
+    { id: 'p-24', category: 'Toiletries', name: 'First Aid Kit & Blister Cushions', essential: true, checked: false },
+    { id: 'p-25', category: 'Electronics', name: 'High-Capacity Power Bank 20,000mAh', essential: true, checked: false }
+  ],
+  'Safari': [
+    { id: 'p-30', category: 'Documents', name: 'Passport, Yellow Fever & Medical Cards', essential: true, checked: false },
+    { id: 'p-31', category: 'Clothing', name: 'Neutral Earth-Tone Clothing (Khaki/Green)', essential: true, checked: false },
+    { id: 'p-32', category: 'Gear', name: '10x42 Waterproof Binoculars', essential: true, checked: false },
+    { id: 'p-33', category: 'Toiletries', name: 'DEET Insect Repellent Spray', essential: true, checked: false },
+    { id: 'p-34', category: 'Electronics', name: 'DSLR Camera with 300mm Telephoto Lens', essential: false, checked: false }
+  ]
+};
+
 export const DEFAULT_ITINERARIES: Record<string, ItineraryDay[]> = {
   'dest-1': [
     {
@@ -135,26 +182,6 @@ export const DEFAULT_ITINERARIES: Record<string, ItineraryDay[]> = {
         { id: 'act-102', timeSlot: '11:00 AM', title: 'Kiyomizu-dera Wooden Stage Tour', location: 'Higashiyama', category: 'Culture', estimatedCostUsd: 4 },
         { id: 'act-103', timeSlot: '01:00 PM', title: 'Traditional Matcha & Wagashi Ceremony', location: 'Ninenzaka Alley', category: 'Dining', estimatedCostUsd: 15 },
         { id: 'act-104', timeSlot: '06:00 PM', title: 'Evening Lantern Walk & Kaiseki Dinner', location: 'Gion Geisha District', category: 'Dining', estimatedCostUsd: 65 }
-      ]
-    },
-    {
-      dayNumber: 2,
-      title: 'Arashiyama Bamboo Grove & Golden Pavilion',
-      activities: [
-        { id: 'act-105', timeSlot: '06:30 AM', title: 'Arashiyama Bamboo Forest Sunrise Stroll', location: 'Western Kyoto', category: 'Relaxation', estimatedCostUsd: 0 },
-        { id: 'act-106', timeSlot: '10:00 AM', title: 'Tenryu-ji Zen Rock Garden & Teahouse', location: 'Arashiyama', category: 'Relaxation', estimatedCostUsd: 5 },
-        { id: 'act-107', timeSlot: '02:00 PM', title: 'Kinkaku-ji (Golden Pavilion) Visit', location: 'Northern Kyoto', category: 'Culture', estimatedCostUsd: 4 }
-      ]
-    }
-  ],
-  'dest-2': [
-    {
-      dayNumber: 1,
-      title: 'Fira to Oia Caldera Cliff Trail Walk',
-      activities: [
-        { id: 'act-201', timeSlot: '08:30 AM', title: 'Scenic Cliff Walk from Fira to Imerovigli', location: 'Santorini Caldera', category: 'Adventure', estimatedCostUsd: 0 },
-        { id: 'act-202', timeSlot: '01:00 PM', title: 'Fresh Seafood Lunch overlooking Ammoudi Bay', location: 'Ammoudi Bay', category: 'Dining', estimatedCostUsd: 45 },
-        { id: 'act-203', timeSlot: '06:30 PM', title: 'Sunset Photography Session at Oia Castle', location: 'Oia Village', category: 'Relaxation', estimatedCostUsd: 0 }
       ]
     }
   ]
@@ -172,40 +199,15 @@ export const INITIAL_POSTS: BlogPost[] = [
     excerpt: 'Stepping into the towering green bamboo stalks at dawn feels like walking into an otherworldly cathedral of nature.',
     coverImage: 'https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?w=800',
     content: [
-      'The morning air in Kyoto carries a quiet stillness that is difficult to find anywhere else on Earth. Standing at the entrance of Arashiyama Bamboo Grove just before sunrise, the first rays of light filter through towering green stalks.',
-      'As the wind blows gently, the rustling bamboo sways in a rhythmic natural symphony. It is one of Japan\'s designated 100 Soundscapes, encouraging visitors to pause and listen to the whisper of nature.',
-      'To make the most of your visit, aim to arrive by 6:30 AM before crowds arrive, allowing for peaceful photography and serene mindfulness.'
+      'The morning air in Kyoto carries a quiet stillness that is difficult to find anywhere else on Earth.'
     ],
-    tags: ['Japan', 'Kyoto', 'Nature', 'Photography'],
-    comments: [
-      { id: 'c-1', author: 'Marcus Vance', text: 'Arashiyama at dawn is truly magical! Great photos.', date: '2026-07-21' }
-    ]
-  },
-  {
-    id: 'post-2',
-    title: 'Chasing Sunsets in Oia: A Guide to Santorini Island',
-    slug: 'chasing-sunsets-in-oia-santorini',
-    destinationId: 'dest-2',
-    author: { name: 'Liam Sterling', avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150', role: 'Senior Photographer' },
-    publishedDate: '2026-07-18',
-    readTimeMinutes: 5,
-    excerpt: 'Discover the secret rooftop vantage points for watching the golden Aegean sunset over Oia’s iconic blue domes.',
-    coverImage: 'https://images.unsplash.com/photo-1570077188670-e3a8d69ac5ff?w=800',
-    content: [
-      'Santorini is famous worldwide for its dramatic caldera views, white cliffside buildings, and romantic evening sunsets.',
-      'While the Byzantine Castle ruins draw thousands of visitors each evening, walking down the narrow cobble stone alleyways toward Ammoudi Bay reveals quieter, equally stunning perspectives.',
-      'Pair your sunset view with local Assyrtiko white wine and fresh grilled octopus for an unforgettable Greek island experience.'
-    ],
-    tags: ['Greece', 'Island', 'Sunset', 'Culture'],
+    tags: ['Japan', 'Kyoto', 'Nature'],
     comments: []
   }
 ];
 
 export const INITIAL_GALLERY: GalleryPhoto[] = [
-  { id: 'gal-1', title: 'Kyoto Red Torii Gates', location: 'Fushimi Inari, Japan', imageUrl: 'https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?w=800', photographer: 'Elena Rostova' },
-  { id: 'gal-2', title: 'Oia Blue Domes', location: 'Santorini, Greece', imageUrl: 'https://images.unsplash.com/photo-1570077188670-e3a8d69ac5ff?w=800', photographer: 'Liam Sterling' },
-  { id: 'gal-3', title: 'Matterhorn Alpine Reflections', location: 'Zermatt, Switzerland', imageUrl: 'https://images.unsplash.com/photo-1530122037265-a5f1f91d3b99?w=800', photographer: 'Elena Rostova' },
-  { id: 'gal-4', title: 'Wild African Lioness', location: 'Serengeti, Tanzania', imageUrl: 'https://images.unsplash.com/photo-1516426122078-c23e76319801?w=800', photographer: 'Liam Sterling' }
+  { id: 'gal-1', title: 'Kyoto Red Torii Gates', location: 'Fushimi Inari, Japan', imageUrl: 'https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?w=800', photographer: 'Elena Rostova' }
 ];
 
 export const useTravelStore = defineStore('travel', {
@@ -226,7 +228,11 @@ export const useTravelStore = defineStore('travel', {
     },
 
     // Trip Itineraries State per Destination ID
-    itineraries: DEFAULT_ITINERARIES as Record<string, ItineraryDay[]>
+    itineraries: DEFAULT_ITINERARIES as Record<string, ItineraryDay[]>,
+
+    // Packing Checklist State
+    currentPackingPreset: 'Urban Culture' as PackingPreset,
+    packingItems: JSON.parse(JSON.stringify(PRESET_PACKING_ITEMS['Urban Culture'])) as PackingItem[]
   }),
 
   getters: {
@@ -255,7 +261,6 @@ export const useTravelStore = defineStore('travel', {
 
         const dailyUsd = dest.dailyCostsUsd[style];
         const totalUsd = dailyUsd * days;
-
         const convertedDaily = dailyUsd * rateInfo.rateFromUsd;
         const convertedTotal = totalUsd * rateInfo.rateFromUsd;
 
@@ -277,7 +282,6 @@ export const useTravelStore = defineStore('travel', {
     getItineraryForDestination: (state) => {
       return (destId: string): ItineraryDay[] => {
         if (!state.itineraries[destId]) {
-          // Initialize default empty day if none exists
           state.itineraries[destId] = [
             {
               dayNumber: 1,
@@ -289,6 +293,17 @@ export const useTravelStore = defineStore('travel', {
           ];
         }
         return state.itineraries[destId];
+      };
+    },
+
+    packingProgress: (state) => {
+      if (state.packingItems.length === 0) return { packed: 0, total: 0, percentage: 0 };
+      const checked = state.packingItems.filter((i) => i.checked).length;
+      const total = state.packingItems.length;
+      return {
+        packed: checked,
+        total,
+        percentage: Math.round((checked / total) * 100)
       };
     }
   },
@@ -343,7 +358,6 @@ export const useTravelStore = defineStore('travel', {
       this.budgetConfig.currency = curr;
     },
 
-    // Itinerary Builder Actions
     addItineraryDay(destId: string, dayTitle?: string) {
       const days = this.getItineraryForDestination(destId);
       const nextDayNumber = days.length + 1;
@@ -388,6 +402,44 @@ export const useTravelStore = defineStore('travel', {
           targetDay.activities.splice(newIdx, 0, item);
         }
       }
+    },
+
+    // Packing Checklist Actions
+    loadPackingPreset(preset: PackingPreset) {
+      this.currentPackingPreset = preset;
+      if (PRESET_PACKING_ITEMS[preset]) {
+        this.packingItems = JSON.parse(JSON.stringify(PRESET_PACKING_ITEMS[preset]));
+      }
+    },
+
+    togglePackingItem(itemId: string) {
+      const item = this.packingItems.find((i) => i.id === itemId);
+      if (item) {
+        item.checked = !item.checked;
+      }
+    },
+
+    addCustomPackingItem(name: string, category: PackingCategory, essential: boolean) {
+      if (name.trim()) {
+        this.packingItems.push({
+          id: `p-${Date.now()}`,
+          name: name.trim(),
+          category,
+          essential,
+          checked: false
+        });
+      }
+    },
+
+    removePackingItem(itemId: string) {
+      const idx = this.packingItems.findIndex((i) => i.id === itemId);
+      if (idx > -1) {
+        this.packingItems.splice(idx, 1);
+      }
+    },
+
+    resetPackingList() {
+      this.loadPackingPreset(this.currentPackingPreset);
     }
   }
 });

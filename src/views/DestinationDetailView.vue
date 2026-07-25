@@ -10,6 +10,7 @@ import { useTravelStore } from '../stores/travelStore';
 import PostCard from '../components/PostCard.vue';
 import BudgetCalculator from '../components/BudgetCalculator.vue';
 import ItineraryBuilder from '../components/ItineraryBuilder.vue';
+import PackingChecklist from '../components/PackingChecklist.vue';
 
 const route = useRoute();
 const travelStore = useTravelStore();
@@ -52,6 +53,7 @@ const relatedPosts = computed(() => {
 
         <BudgetCalculator :destination-id="destination.id" class="margin-top-calc" />
         <ItineraryBuilder :destination-id="destination.id" class="margin-top-calc" />
+        <PackingChecklist class="margin-top-calc" />
       </div>
 
       <div class="sidebar-col">

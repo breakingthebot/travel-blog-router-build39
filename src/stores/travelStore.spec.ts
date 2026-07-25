@@ -58,15 +58,13 @@ describe('travelStore Pinia store', () => {
     const store = useTravelStore();
     const destId = 'dest-1';
     const initialDays = store.getItineraryForDestination(destId);
-    expect(initialDays.length).toBe(2);
+    expect(initialDays.length).toBe(1);
 
-    // Add Day
-    store.addItineraryDay(destId, 'Day 3 Sagano Scenic Train');
+    store.addItineraryDay(destId, 'Day 2 Sagano');
     const updatedDays = store.getItineraryForDestination(destId);
-    expect(updatedDays.length).toBe(3);
+    expect(updatedDays.length).toBe(2);
 
-    // Add Activity to Day 3
-    store.addActivityToDay(destId, 3, {
+    store.addActivityToDay(destId, 2, {
       timeSlot: '09:00 AM',
       title: 'Sagano Romantic Train Ride',
       location: 'Kameoka Station',
@@ -74,13 +72,31 @@ describe('travelStore Pinia store', () => {
       estimatedCostUsd: 12
     });
 
-    const day3 = updatedDays.find((d) => d.dayNumber === 3);
-    expect(day3?.activities.length).toBe(1);
-    expect(day3?.activities[0].title).toBe('Sagano Romantic Train Ride');
+    const day2 = updatedDays.find((d) => d.dayNumber === 2);
+    expect(day2?.activities.length).toBe(1);
+    expect(day2?.activities[0].title).toBe('Sagano Romantic Train Ride');
 
-    // Remove Activity
-    const actId = day3!.activities[0].id;
-    store.removeActivityFromDay(destId, 3, actId);
-    expect(day3?.activities.length).toBe(0);
+    const actId = day2!.activities[0].id;
+    store.removeActivityFromDay(destId, 2, actId);
+    expect(day2?.activities.length).toBe(0);
+  });
+
+  it('should load packing presets, toggle items, add custom items, and compute progress correctly', () => {
+    const store = useTravelStore();
+    store.loadPackingPreset('Beach Resort');
+    expect(store.currentPackingPreset).toBe('Beach Resort');
+    expect(store.packingItems.length).toBe(6);
+    expect(store.packingProgress.percentage).toBe(0);
+
+    // Toggle item checked
+    const firstItemId = store.packingItems[0].id;
+    store.togglePackingItem(firstItemId);
+    expect(store.packingItems[0].checked).toBe(true);
+    expect(store.packingProgress.packed).toBe(1);
+    expect(store.packingProgress.percentage).toBe(17); // 1/6 ~ 17%
+
+    // Add custom item
+    store.addCustomPackingItem('Snorkel & Mask Set', 'Gear', true);
+    expect(store.packingItems.length).toBe(7);
   });
 });

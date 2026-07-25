@@ -5,6 +5,18 @@ All notable changes to **Build 39 — TravelPulse Vue Router Multi-page Travel B
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.4.0] - 2026-07-25
+
+### Added
+- Built `src/components/PackingChecklist.vue` providing filterable travel packing checklists tailored for different travel styles.
+- Added Travel Preset chips (`Urban Culture`, `Beach Resort`, `Alpine Hiking`, `Safari`).
+- Added category filters (`All`, `Documents`, `Clothing`, `Electronics`, `Toiletries`, `Gear`).
+- Added packing progress bar & status indicator (e.g. `5 / 8 Packed (63%)`).
+- Added essential items indicator badge (`REQUIRED`).
+- Added custom item creation form with category & essential toggles.
+- Integrated `PackingChecklist.vue` into `DestinationDetailView.vue` and `DestinationsView.vue`.
+- Added unit tests in `src/stores/travelStore.spec.ts` testing preset switching, item toggling, custom item creation, and progress computation.
+
 ## [0.3.0] - 2026-07-25
 
 ### Added

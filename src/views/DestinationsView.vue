@@ -8,6 +8,7 @@ import { useTravelStore } from '../stores/travelStore';
 import DestinationCard from '../components/DestinationCard.vue';
 import BudgetCalculator from '../components/BudgetCalculator.vue';
 import ItineraryBuilder from '../components/ItineraryBuilder.vue';
+import PackingChecklist from '../components/PackingChecklist.vue';
 
 const travelStore = useTravelStore();
 const regions = ['All', 'Europe', 'Asia', 'Africa', 'Americas'];
@@ -62,10 +63,11 @@ const regions = ['All', 'Europe', 'Asia', 'Africa', 'Americas'];
       </button>
     </div>
 
-    <!-- Interactive Budget Estimator Tool & Itinerary Planner -->
+    <!-- Interactive Budget Estimator Tool, Itinerary Planner & Packing Checklist -->
     <section class="budget-section margin-top">
       <BudgetCalculator />
       <ItineraryBuilder class="margin-top" />
+      <PackingChecklist class="margin-top" />
     </section>
   </div>
 </template>
