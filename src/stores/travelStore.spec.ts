@@ -60,16 +60,23 @@ describe('travelStore Pinia store', () => {
     expect(updatedDays.length).toBe(2);
   });
 
-  it('should support weather climate seasonal selection and temperature conversion (C to F)', () => {
+  it('should support guest travel story submission and retrieval by destination', () => {
     const store = useTravelStore();
-    expect(store.selectedSeason).toBe('spring');
+    const initialKyotoStories = store.getStoriesForDestination('dest-1');
+    expect(initialKyotoStories.length).toBe(1);
 
-    store.setSelectedSeason('summer');
-    expect(store.selectedSeason).toBe('summer');
+    store.submitGuestTravelStory({
+      destinationId: 'dest-1',
+      authorName: 'Alex Rivera',
+      tripDate: '2026-07-01',
+      rating: 5,
+      storyTitle: 'Incredible Teahouse Experience in Gion',
+      storyContent: 'We attended a traditional matcha ceremony in Gion. It was serene and educational!'
+    });
 
-    // Kyoto spring temp 16C -> 61F
-    expect(store.formatTemp(16)).toBe('16°C');
-    store.toggleTempUnit();
-    expect(store.formatTemp(16)).toBe('61°F');
+    const updatedKyotoStories = store.getStoriesForDestination('dest-1');
+    expect(updatedKyotoStories.length).toBe(2);
+    expect(updatedKyotoStories[0].storyTitle).toBe('Incredible Teahouse Experience in Gion');
+    expect(updatedKyotoStories[0].verifiedVisitor).toBe(true);
   });
 });

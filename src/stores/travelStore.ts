@@ -1,5 +1,5 @@
 // src/stores/travelStore.ts
-// Pinia store managing travel destinations, blog posts, photo gallery, bookmarks, trip budget calculator, visual trip itinerary builder, packing checklist generator, travel quiz recommender, travel map visualizer, saved offline reading manager, and weather/climate guide widget.
+// Pinia store managing travel destinations, blog posts, photo gallery, bookmarks, trip budget calculator, visual trip itinerary builder, packing checklist generator, travel quiz recommender, travel map visualizer, saved offline reading manager, weather/climate guide widget, and user travel story submission form.
 // Connects to: views/*.vue, components/*.vue
 // Created: 2026-07-25
 
@@ -22,6 +22,19 @@ export interface DestinationClimate {
   rainfallMm: Record<SeasonKey, number>;
   bestMonths: string;
   packingTip: string;
+}
+
+export interface GuestTravelStory {
+  id: string;
+  destinationId: string;
+  authorName: string;
+  authorAvatar: string;
+  tripDate: string;
+  rating: number;
+  storyTitle: string;
+  storyContent: string;
+  userPhotoUrl?: string;
+  verifiedVisitor: boolean;
 }
 
 export interface Destination {
@@ -197,6 +210,33 @@ export const INITIAL_DESTINATIONS: Destination[] = [
   }
 ];
 
+export const INITIAL_GUEST_STORIES: GuestTravelStory[] = [
+  {
+    id: 'story-1',
+    destinationId: 'dest-1',
+    authorName: 'Marcus Vance',
+    authorAvatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150',
+    tripDate: '2026-06-14',
+    rating: 5,
+    storyTitle: 'Watching Dawn Break at Fushimi Inari',
+    storyContent: 'Walking through the red torii gates at 6 AM before the crowds arrived was pure magic. The silence of the forest mountain trail is something I will remember for the rest of my life.',
+    userPhotoUrl: 'https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?w=800',
+    verifiedVisitor: true
+  },
+  {
+    id: 'story-2',
+    destinationId: 'dest-2',
+    authorName: 'Sophia Lin',
+    authorAvatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150',
+    tripDate: '2026-05-22',
+    rating: 5,
+    storyTitle: 'Unforgettable Sunset Dinner in Oia',
+    storyContent: 'We booked a cliffside table overlooking the Aegean sea. Watching the sun dip below the horizon behind the blue domes of Oia was breathtaking beyond words.',
+    userPhotoUrl: 'https://images.unsplash.com/photo-1570077188670-e3a8d69ac5ff?w=800',
+    verifiedVisitor: true
+  }
+];
+
 export const INITIAL_POSTS: BlogPost[] = [
   {
     id: 'post-1',
@@ -262,6 +302,7 @@ export const useTravelStore = defineStore('travel', {
     destinations: INITIAL_DESTINATIONS as Destination[],
     posts: INITIAL_POSTS as BlogPost[],
     gallery: INITIAL_GALLERY as GalleryPhoto[],
+    guestStories: INITIAL_GUEST_STORIES as GuestTravelStory[],
     selectedRegion: 'All' as string,
     searchQuery: '' as string,
     savedWishlist: [] as string[],
@@ -290,7 +331,6 @@ export const useTravelStore = defineStore('travel', {
     savedOfflinePostIds: ['post-1'] as string[],
     readingProgress: {} as Record<string, number>,
 
-    // Weather & Climate Widget State
     selectedSeason: 'spring' as SeasonKey,
     tempUnit: 'C' as TempUnit
   }),
@@ -387,6 +427,13 @@ export const useTravelStore = defineStore('travel', {
           return `${tempF}°F`;
         }
         return `${tempC}°C`;
+      };
+    },
+
+    getStoriesForDestination: (state) => {
+      return (destId?: string) => {
+        if (!destId) return state.guestStories;
+        return state.guestStories.filter((s) => s.destinationId === destId);
       };
     }
   },
@@ -591,13 +638,45 @@ export const useTravelStore = defineStore('travel', {
       this.savedOfflinePostIds = [];
     },
 
-    // Weather & Climate Actions
     setSelectedSeason(season: SeasonKey) {
       this.selectedSeason = season;
     },
 
     toggleTempUnit() {
       this.tempUnit = this.tempUnit === 'C' ? 'F' : 'C';
+    },
+
+    // User Travel Story Actions
+    submitGuestTravelStory(story: {
+      destinationId: string;
+      authorName: string;
+      tripDate: string;
+      rating: number;
+      storyTitle: string;
+      storyContent: string;
+      userPhotoUrl?: string;
+    }) {
+      const avatars = [
+        'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150',
+        'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150',
+        'https://images.unsplash.com/photo-1517841905240-472988babdf9?w=150'
+      ];
+      const randomAvatar = avatars[Math.floor(Math.random() * avatars.length)];
+
+      const newStory: GuestTravelStory = {
+        id: `story-${Date.now()}`,
+        destinationId: story.destinationId,
+        authorName: story.authorName || 'Anonymous Traveler',
+        authorAvatar: randomAvatar,
+        tripDate: story.tripDate || new Date().toISOString().split('T')[0],
+        rating: Math.max(1, Math.min(5, story.rating)),
+        storyTitle: story.storyTitle.trim(),
+        storyContent: story.storyContent.trim(),
+        userPhotoUrl: story.userPhotoUrl || undefined,
+        verifiedVisitor: true
+      };
+
+      this.guestStories.unshift(newStory);
     }
   }
 });
