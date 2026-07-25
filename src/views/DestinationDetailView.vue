@@ -20,6 +20,7 @@ import DestinationComparator from '../components/DestinationComparator.vue';
 import CurrencyCalculator from '../components/CurrencyCalculator.vue';
 import TravelPhrasebook from '../components/TravelPhrasebook.vue';
 import PassportTracker from '../components/PassportTracker.vue';
+import EmergencyContactsWidget from '../components/EmergencyContactsWidget.vue';
 
 const route = useRoute();
 const travelStore = useTravelStore();
@@ -71,6 +72,7 @@ const relatedPosts = computed(() => {
         <TravelExpensesExporter :destination-id="destination.id" class="margin-top-calc" />
         <TravelPhrasebook class="margin-top-calc" />
         <PassportTracker class="margin-top-calc" />
+        <EmergencyContactsWidget :destination-id="destination.id" class="margin-top-calc" />
         <PackingChecklist class="margin-top-calc" />
       </div>
 

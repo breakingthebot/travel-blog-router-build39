@@ -5,6 +5,16 @@ All notable changes to **Build 39 — TravelPulse Vue Router Multi-page Travel B
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.16.0] - 2026-07-25
+
+### Added
+- Built `src/components/EmergencyContactsWidget.vue` providing an interactive destination emergency contacts & embassy directory.
+- Added hotline grid for Police, Ambulance, Fire, and Universal Tourist Emergency with one-click `tel:` calling links.
+- Added foreign embassy & consulate directory (US, UK, Canadian embassies) with phone, address, and website details.
+- Added recommended 24/7 international emergency hospitals and trauma centers list.
+- Integrated `EmergencyContactsWidget.vue` into `DestinationDetailView.vue` and `DestinationsView.vue`.
+- Added unit tests in `src/stores/travelStore.spec.ts` testing emergency contact dataset retrieval per destination.
+
 ## [0.15.0] - 2026-07-25
 
 ### Added

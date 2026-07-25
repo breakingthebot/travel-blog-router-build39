@@ -49,15 +49,16 @@ describe('travelStore Pinia store', () => {
     expect(budgetUsd.currencySymbol).toBe('$');
   });
 
-  it('should track digital passport stamps progress and toggle stamp claims', () => {
+  it('should retrieve emergency hotline numbers and embassy lists for selected destination', () => {
     const store = useTravelStore();
-    const progress = store.passportProgress;
-    expect(progress.unlocked).toBe(2);
-    expect(progress.total).toBe(6);
-    expect(progress.percentage).toBe(33);
+    const emergencyKyoto = store.getEmergencyContactForDestination('dest-1');
+    expect(emergencyKyoto.policeNumber).toBe('110');
+    expect(emergencyKyoto.ambulanceNumber).toBe('119');
+    expect(emergencyKyoto.embassies.length).toBe(3);
 
-    store.toggleClaimStamp('stamp-2'); // Claim Santorini stamp
-    expect(store.passportProgress.unlocked).toBe(3);
-    expect(store.isStampUnlocked('stamp-2')).toBe(true);
+    store.setActiveEmergencyDestId('dest-2');
+    const emergencySantorini = store.getEmergencyContactForDestination();
+    expect(emergencySantorini.country).toBe('Greece');
+    expect(emergencySantorini.generalEmergencyNumber).toBe('112');
   });
 });

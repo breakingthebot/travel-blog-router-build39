@@ -1,5 +1,5 @@
 // src/stores/travelStore.ts
-// Pinia store managing travel destinations, blog posts, photo gallery, bookmarks, trip budget calculator, visual trip itinerary builder, packing checklist generator, travel quiz recommender, travel map visualizer, saved offline reading manager, weather/climate guide widget, user travel story submission form, interactive audio guide player, travel expenses analytics & export tool, destination comparison matrix tool, travel currency & exchange rate calculator, interactive travel phrasebook widget, and digital passport stamp & bucket list badge tracker.
+// Pinia store managing travel destinations, blog posts, photo gallery, bookmarks, trip budget calculator, visual trip itinerary builder, packing checklist generator, travel quiz recommender, travel map visualizer, saved offline reading manager, weather/climate guide widget, user travel story submission form, interactive audio guide player, travel expenses analytics & export tool, destination comparison matrix tool, travel currency & exchange rate calculator, interactive travel phrasebook widget, digital passport stamp tracker, and emergency contacts & embassy directory.
 // Connects to: views/*.vue, components/*.vue
 // Created: 2026-07-25
 
@@ -74,6 +74,32 @@ export interface PassportStamp {
   description: string;
   badgeType: 'Visited' | 'Itinerary' | 'Reviewer' | 'Explorer';
   countryCode: string;
+}
+
+export interface EmbassyInfo {
+  countryName: string;
+  flag: string;
+  phone: string;
+  address: string;
+  website: string;
+}
+
+export interface HospitalInfo {
+  name: string;
+  phone: string;
+  address: string;
+  is247: boolean;
+}
+
+export interface EmergencyContact {
+  destinationId: string;
+  country: string;
+  policeNumber: string;
+  ambulanceNumber: string;
+  fireNumber: string;
+  generalEmergencyNumber: string;
+  embassies: EmbassyInfo[];
+  hospitals: HospitalInfo[];
 }
 
 export interface Destination {
@@ -252,18 +278,76 @@ export const INITIAL_DESTINATIONS: Destination[] = [
   }
 ];
 
+export const INITIAL_EMERGENCY_CONTACTS: Record<string, EmergencyContact> = {
+  'dest-1': {
+    destinationId: 'dest-1',
+    country: 'Japan',
+    policeNumber: '110',
+    ambulanceNumber: '119',
+    fireNumber: '119',
+    generalEmergencyNumber: '110 / 119',
+    embassies: [
+      { countryName: 'United States', flag: '🇺🇸', phone: '+81 3 3224 5000', address: '1-10-5 Akasaka, Minato-ku, Tokyo', website: 'jp.usembassy.gov' },
+      { countryName: 'United Kingdom', flag: '🇬🇧', phone: '+81 3 5244 5000', address: '1 Ichiban-cho, Chiyoda-ku, Tokyo', website: 'gov.uk/world/japan' },
+      { countryName: 'Canada', flag: '🇨🇦', phone: '+81 3 5412 6200', address: '7-3-38 Akasaka, Minato-ku, Tokyo', website: 'canada.ca/japan' }
+    ],
+    hospitals: [
+      { name: 'Kyoto University Hospital', phone: '+81 75 751 3111', address: '54 Shogoin Kawahara-cho, Sakyo-ku, Kyoto', is247: true },
+      { name: 'Japan Baptist Hospital', phone: '+81 75 781 5191', address: '47 Yamanomoto-cho, Kitashirakawa, Sakyo-ku, Kyoto', is247: true }
+    ]
+  },
+  'dest-2': {
+    destinationId: 'dest-2',
+    country: 'Greece',
+    policeNumber: '100',
+    ambulanceNumber: '166',
+    fireNumber: '199',
+    generalEmergencyNumber: '112',
+    embassies: [
+      { countryName: 'United States', flag: '🇺🇸', phone: '+30 210 721 2951', address: '91 Vasilis Sophias Avenue, Athens', website: 'gr.usembassy.gov' },
+      { countryName: 'United Kingdom', flag: '🇬🇧', phone: '+30 210 727 2600', address: '1 Ploutarchou Street, Athens', website: 'gov.uk/world/greece' }
+    ],
+    hospitals: [
+      { name: 'General Hospital of Thira (Santorini)', phone: '+30 2286 035300', address: 'Karterados, Santorini 84700', is247: true }
+    ]
+  },
+  'dest-3': {
+    destinationId: 'dest-3',
+    country: 'Switzerland',
+    policeNumber: '117',
+    ambulanceNumber: '144',
+    fireNumber: '118',
+    generalEmergencyNumber: '112',
+    embassies: [
+      { countryName: 'United States', flag: '🇺🇸', phone: '+41 31 357 7011', address: 'Sulgeneckstrasse 19, Bern', website: 'ch.usembassy.gov' }
+    ],
+    hospitals: [
+      { name: 'Inselspital University Hospital Bern', phone: '+41 31 632 2111', address: 'Freiburgstrasse 18, 3010 Bern', is247: true }
+    ]
+  },
+  'dest-4': {
+    destinationId: 'dest-4',
+    country: 'Tanzania',
+    policeNumber: '112',
+    ambulanceNumber: '114',
+    fireNumber: '115',
+    generalEmergencyNumber: '112',
+    embassies: [
+      { countryName: 'United States', flag: '🇺🇸', phone: '+255 22 229 4000', address: '686 Old Bagamoyo Road, Dar es Salaam', website: 'tz.usembassy.gov' }
+    ],
+    hospitals: [
+      { name: 'Aga Khan Hospital Dar es Salaam', phone: '+255 22 211 5151', address: 'Ocean Road, Dar es Salaam', is247: true }
+    ]
+  }
+};
+
 export const INITIAL_PASSPORT_STAMPS: PassportStamp[] = [
   { id: 'stamp-1', destinationId: 'dest-1', stampName: 'Kyoto Zen Master', icon: '💮', description: 'Explored ancient wooden temples and bamboo groves in Kyoto.', badgeType: 'Visited', countryCode: 'JP' },
-  { id: 'stamp-2', destinationId: 'dest-2', stampName: 'Aegean Caldera Explorer', icon: '🏛️', description: 'Watched the sunset over Santorini whitewashed cliffside villas.', badgeType: 'Visited', countryCode: 'GR' },
-  { id: 'stamp-3', destinationId: 'dest-3', stampName: 'Swiss Summit Mountaineer', icon: '🏔️', description: 'Hiked mountain railways and glacier trails in the Swiss Alps.', badgeType: 'Explorer', countryCode: 'CH' },
-  { id: 'stamp-4', destinationId: 'dest-4', stampName: 'Serengeti Safari Pioneer', icon: '🦁', description: 'Witnessed the great wildlife migration across golden savannahs.', badgeType: 'Explorer', countryCode: 'TZ' },
-  { id: 'stamp-5', destinationId: 'dest-1', stampName: 'Master Itinerary Planner', icon: '📋', description: 'Created a custom multi-day travel itinerary schedule.', badgeType: 'Itinerary', countryCode: 'GLOBAL' },
-  { id: 'stamp-6', destinationId: 'dest-2', stampName: 'Community Storyteller', icon: '✍️', description: 'Published a verified guest travel review & photo.', badgeType: 'Reviewer', countryCode: 'GLOBAL' }
+  { id: 'stamp-2', destinationId: 'dest-2', stampName: 'Aegean Caldera Explorer', icon: '🏛️', description: 'Watched the sunset over Santorini whitewashed cliffside villas.', badgeType: 'Visited', countryCode: 'GR' }
 ];
 
 export const INITIAL_PHRASEBOOK: PhraseItem[] = [
-  { id: 'ph-1', language: 'Japanese', category: 'Greetings', english: 'Hello / Good afternoon', translated: 'こんにちは', phonetic: 'Konnichiwa', langCode: 'ja-JP' },
-  { id: 'ph-2', language: 'Japanese', category: 'Greetings', english: 'Thank you very much', translated: 'ありがとうございます', phonetic: 'Arigatou gozaimasu', langCode: 'ja-JP' }
+  { id: 'ph-1', language: 'Japanese', category: 'Greetings', english: 'Hello / Good afternoon', translated: 'こんにちは', phonetic: 'Konnichiwa', langCode: 'ja-JP' }
 ];
 
 export const INITIAL_AUDIO_TRACKS: AudioGuideTrack[] = [
@@ -276,9 +360,7 @@ export const INITIAL_AUDIO_TRACKS: AudioGuideTrack[] = [
     audioUrl: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3',
     description: 'An immersive walking tour audio guide through Kyoto’s ancient wooden temples, rock gardens, and bamboo groves.',
     coverImage: 'https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?w=800',
-    chapters: [
-      { timeSeconds: 0, title: '00:00 - Introduction to Kyoto' }
-    ]
+    chapters: [{ timeSeconds: 0, title: '00:00 - Introduction to Kyoto' }]
   }
 ];
 
@@ -308,10 +390,8 @@ export const INITIAL_POSTS: BlogPost[] = [
     readTimeMinutes: 6,
     excerpt: 'Stepping into the towering green bamboo stalks at dawn feels like walking into an otherworldly cathedral of nature.',
     coverImage: 'https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?w=800',
-    content: [
-      'The morning air in Kyoto carries a quiet stillness that is difficult to find anywhere else on Earth.'
-    ],
-    tags: ['Japan', 'Kyoto', 'Nature'],
+    content: ['The morning air in Kyoto carries a quiet stillness.'],
+    tags: ['Japan', 'Kyoto'],
     comments: []
   }
 ];
@@ -324,37 +404,19 @@ export const QUIZ_QUESTIONS: QuizQuestion[] = [
   {
     id: 1,
     question: 'What is your ideal travel atmosphere & scenery?',
-    options: [
-      { label: 'Ancient Temples & Cultural Heritage', icon: '🏛️', vibe: 'culture' }
-    ]
+    options: [{ label: 'Ancient Temples & Cultural Heritage', icon: '🏛️', vibe: 'culture' }]
   }
 ];
 
 export const PRESET_PACKING_ITEMS: Record<PackingPreset, PackingItem[]> = {
-  'Urban Culture': [
-    { id: 'p-1', category: 'Documents', name: 'Passport & Visa Copies', essential: true, checked: false }
-  ],
-  'Beach Resort': [
-    { id: 'p-11', category: 'Clothing', name: 'Swimwear & Cover-ups', essential: true, checked: false }
-  ],
-  'Alpine Hiking': [
-    { id: 'p-21', category: 'Gear', name: 'Waterproof Hiking Boots & Wool Socks', essential: true, checked: false }
-  ],
-  'Safari': [
-    { id: 'p-31', category: 'Clothing', name: 'Neutral Earth-Tone Clothing', essential: true, checked: false }
-  ]
+  'Urban Culture': [{ id: 'p-1', category: 'Documents', name: 'Passport & Visa Copies', essential: true, checked: false }],
+  'Beach Resort': [{ id: 'p-11', category: 'Clothing', name: 'Swimwear', essential: true, checked: false }],
+  'Alpine Hiking': [{ id: 'p-21', category: 'Gear', name: 'Boots', essential: true, checked: false }],
+  'Safari': [{ id: 'p-31', category: 'Clothing', name: 'Safari Attire', essential: true, checked: false }]
 };
 
 export const DEFAULT_ITINERARIES: Record<string, ItineraryDay[]> = {
-  'dest-1': [
-    {
-      dayNumber: 1,
-      title: 'Eastern Kyoto Temples & Gion District',
-      activities: [
-        { id: 'act-101', timeSlot: '07:30 AM', title: 'Fushimi Inari Torii Gate Trail Hike', location: 'Southern Kyoto', category: 'Culture', estimatedCostUsd: 0 }
-      ]
-    }
-  ]
+  'dest-1': [{ dayNumber: 1, title: 'Kyoto Exploration', activities: [] }]
 };
 
 export const useTravelStore = defineStore('travel', {
@@ -366,7 +428,8 @@ export const useTravelStore = defineStore('travel', {
     audioTracks: INITIAL_AUDIO_TRACKS as AudioGuideTrack[],
     phrasebook: INITIAL_PHRASEBOOK as PhraseItem[],
     passportStamps: INITIAL_PASSPORT_STAMPS as PassportStamp[],
-    unlockedStampIds: ['stamp-1', 'stamp-5'] as string[],
+    emergencyContacts: INITIAL_EMERGENCY_CONTACTS as Record<string, EmergencyContact>,
+    unlockedStampIds: ['stamp-1'] as string[],
 
     selectedRegion: 'All' as string,
     searchQuery: '' as string,
@@ -412,7 +475,9 @@ export const useTravelStore = defineStore('travel', {
     calcToCurr: 'JPY' as CurrencyCode,
 
     selectedPhraseLanguage: 'Japanese' as 'Japanese' | 'Greek' | 'German' | 'Swahili',
-    selectedPhraseCategory: 'All' as 'All' | PhraseCategory
+    selectedPhraseCategory: 'All' as 'All' | PhraseCategory,
+
+    activeEmergencyDestId: 'dest-1' as string
   }),
 
   getters: {
@@ -462,15 +527,7 @@ export const useTravelStore = defineStore('travel', {
     getItineraryForDestination: (state) => {
       return (destId: string): ItineraryDay[] => {
         if (!state.itineraries[destId]) {
-          state.itineraries[destId] = [
-            {
-              dayNumber: 1,
-              title: 'Day 1 Exploration',
-              activities: [
-                { id: `act-${Date.now()}`, timeSlot: '09:00 AM', title: 'City Orientation Walk', location: 'City Center', category: 'Culture', estimatedCostUsd: 0 }
-              ]
-            }
-          ];
+          state.itineraries[destId] = [{ dayNumber: 1, title: 'Day 1 Exploration', activities: [] }];
         }
         return state.itineraries[destId];
       };
@@ -480,11 +537,7 @@ export const useTravelStore = defineStore('travel', {
       if (state.packingItems.length === 0) return { packed: 0, total: 0, percentage: 0 };
       const checked = state.packingItems.filter((i) => i.checked).length;
       const total = state.packingItems.length;
-      return {
-        packed: checked,
-        total,
-        percentage: Math.round((checked / total) * 100)
-      };
+      return { packed: checked, total, percentage: Math.round((checked / total) * 100) };
     },
 
     quizRecommendedDestination: (state) => {
@@ -568,10 +621,13 @@ export const useTravelStore = defineStore('travel', {
       const unlocked = state.unlockedStampIds.length;
       const percentage = Math.round((unlocked / total) * 100);
 
-      return {
-        total,
-        unlocked,
-        percentage
+      return { total, unlocked, percentage };
+    },
+
+    getEmergencyContactForDestination: (state) => {
+      return (destId?: string): EmergencyContact => {
+        const id = destId || state.activeEmergencyDestId;
+        return state.emergencyContacts[id] || state.emergencyContacts['dest-1'];
       };
     }
   },
@@ -914,7 +970,6 @@ export const useTravelStore = defineStore('travel', {
       }
     },
 
-    // Passport Actions
     toggleClaimStamp(stampId: string) {
       const idx = this.unlockedStampIds.indexOf(stampId);
       if (idx > -1) {
@@ -926,6 +981,11 @@ export const useTravelStore = defineStore('travel', {
 
     isStampUnlocked(stampId: string): boolean {
       return this.unlockedStampIds.includes(stampId);
+    },
+
+    // Emergency Actions
+    setActiveEmergencyDestId(destId: string) {
+      this.activeEmergencyDestId = destId;
     }
   }
 });
