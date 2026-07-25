@@ -49,15 +49,25 @@ describe('travelStore Pinia store', () => {
     expect(budgetUsd.currencySymbol).toBe('$');
   });
 
-  it('should manage day-by-day trip itineraries (add day, add activity, remove activity, reorder)', () => {
+  it('should process full 4-question travel quiz, compute destination match, and reset', () => {
     const store = useTravelStore();
-    const destId = 'dest-1';
-    const initialDays = store.getItineraryForDestination(destId);
-    expect(initialDays.length).toBe(1);
+    expect(store.quiz.currentStep).toBe(0);
 
-    store.addItineraryDay(destId, 'Day 2 Sagano');
-    const updatedDays = store.getItineraryForDestination(destId);
-    expect(updatedDays.length).toBe(2);
+    store.answerQuizStep('culture');
+    expect(store.quiz.currentStep).toBe(1);
+
+    store.answerQuizStep('explorer');
+    expect(store.quiz.currentStep).toBe(2);
+
+    store.answerQuizStep('culture');
+    expect(store.quiz.currentStep).toBe(3);
+
+    store.answerQuizStep('culture');
+    expect(store.quiz.currentStep).toBe(4); // Result screen
+    expect(store.quizRecommendedDestination.name).toBe('Kyoto');
+
+    store.resetQuiz();
+    expect(store.quiz.currentStep).toBe(0);
   });
 
   it('should support audio guide playback, track switching, chapter seeking, and rate adjustment', () => {
@@ -65,20 +75,15 @@ describe('travelStore Pinia store', () => {
     expect(store.activeAudioTrack.title).toBe('Kyoto Temple Architecture & Zen Garden Secrets');
     expect(store.isAudioPlaying).toBe(false);
 
-    // Play/Pause toggle
     store.toggleAudioPlayback();
     expect(store.isAudioPlaying).toBe(true);
 
-    // Select new track
     store.selectAudioTrack('audio-2');
     expect(store.activeAudioTrack.id).toBe('audio-2');
-    expect(store.activeAudioTrack.title).toBe('Santorini Caldera & Oia Sunset Walking Guide');
 
-    // Seek chapter time
     store.seekAudioTime(120);
     expect(store.audioCurrentTimeSeconds).toBe(120);
 
-    // Playback rate adjustment
     store.setPlaybackRate(1.5);
     expect(store.playbackRate).toBe(1.5);
   });

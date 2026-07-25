@@ -304,7 +304,40 @@ export const QUIZ_QUESTIONS: QuizQuestion[] = [
     id: 1,
     question: 'What is your ideal travel atmosphere & scenery?',
     options: [
-      { label: 'Ancient Temples & Cultural Heritage', icon: '🏛️', vibe: 'culture' }
+      { label: 'Ancient Temples & Cultural Heritage', icon: '🏛️', vibe: 'culture' },
+      { label: 'Sun-kissed Beaches & Cliffside Villas', icon: '🏖️', vibe: 'beach' },
+      { label: 'Majestic Snowy Mountains & Alpine Lakes', icon: '🏔️', vibe: 'alpine' },
+      { label: 'Endless Golden Savannahs & Wildlife Safaris', icon: '🦁', vibe: 'wildlife' }
+    ]
+  },
+  {
+    id: 2,
+    question: 'What is your preferred travel style & daily budget?',
+    options: [
+      { label: 'Budget Backpacker (< $75 / day)', icon: '🎒', vibe: 'backpacker' },
+      { label: 'Balanced Explorer ($75 - $200 / day)', icon: '🧳', vibe: 'explorer' },
+      { label: 'Luxury & 5-Star Comfort (> $200 / day)', icon: '💎', vibe: 'luxury' },
+      { label: 'Nature Eco-Lodge & Glamping', icon: '🌿', vibe: 'nature' }
+    ]
+  },
+  {
+    id: 3,
+    question: 'Which daily activity excites you the most?',
+    options: [
+      { label: 'Zen Garden Walks & Matcha Teahouse Ceremonies', icon: '🍵', vibe: 'culture' },
+      { label: 'Caldera Sunset Dining & Aegean Wine Tasting', icon: '🍷', vibe: 'beach' },
+      { label: 'High-Altitude Glacier Hiking & Mountain Railways', icon: '⛷️', vibe: 'alpine' },
+      { label: 'Open-top 4x4 Game Drives Watching Lion Pods', icon: '📷', vibe: 'wildlife' }
+    ]
+  },
+  {
+    id: 4,
+    question: 'What is your preferred trip pace & climate window?',
+    options: [
+      { label: 'Spring Cherry Blossoms & Historic Walks', icon: '🌸', vibe: 'culture' },
+      { label: 'Warm Mediterranean Summer Sun', icon: '☀️', vibe: 'beach' },
+      { label: 'Crisp Autumn Mountain Air', icon: '🍁', vibe: 'alpine' },
+      { label: 'Dry Season Wildlife Migration Window', icon: '🌍', vibe: 'wildlife' }
     ]
   }
 ];
