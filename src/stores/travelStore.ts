@@ -1,5 +1,5 @@
 // src/stores/travelStore.ts
-// Pinia store managing travel destinations, blog posts, photo gallery, bookmarks, trip budget calculator, visual trip itinerary builder, packing checklist generator, travel quiz recommender, travel map visualizer, saved offline reading manager, weather/climate guide widget, user travel story submission form, interactive audio guide player, travel expenses analytics & export tool, destination comparison matrix tool, travel currency & exchange rate calculator, interactive travel phrasebook widget, digital passport stamp tracker, and emergency contacts & embassy directory.
+// Pinia store managing travel destinations, blog posts, photo gallery, bookmarks, trip budget calculator, visual trip itinerary builder, packing checklist generator, travel quiz recommender, travel map visualizer, saved offline reading manager, weather/climate guide widget, user travel story submission form, interactive audio guide player, travel expenses analytics & export tool, destination comparison matrix tool, travel currency & exchange rate calculator, interactive travel phrasebook widget, digital passport stamp tracker, emergency contacts & embassy directory, and local cultural etiquette & Do's and Don'ts guide.
 // Connects to: views/*.vue, components/*.vue
 // Created: 2026-07-25
 
@@ -100,6 +100,22 @@ export interface EmergencyContact {
   generalEmergencyNumber: string;
   embassies: EmbassyInfo[];
   hospitals: HospitalInfo[];
+}
+
+export interface EtiquetteRule {
+  title: string;
+  explanation: string;
+  icon: string;
+}
+
+export interface CulturalGuide {
+  destinationId: string;
+  country: string;
+  tippingCustoms: string;
+  dressCodeRules: string;
+  dos: EtiquetteRule[];
+  donts: EtiquetteRule[];
+  tabooWarnings: string[];
 }
 
 export interface Destination {
@@ -278,6 +294,79 @@ export const INITIAL_DESTINATIONS: Destination[] = [
   }
 ];
 
+export const INITIAL_CULTURAL_GUIDES: Record<string, CulturalGuide> = {
+  'dest-1': {
+    destinationId: 'dest-1',
+    country: 'Japan',
+    tippingCustoms: '🚫 No Tipping Expected! Tipping is considered insulting in Japan; excellent service is included automatically.',
+    dressCodeRules: '👟 Remove shoes before stepping onto tatami mats or inside temples. Slip-on shoes are recommended.',
+    dos: [
+      { title: 'Bow Slightly When Greeting', explanation: 'A slight bow is customary when saying thank you or meeting locals.', icon: '🙇' },
+      { title: 'Hold Trash Until Finding a Bin', explanation: 'Public trash cans are rare in Kyoto; carry a small bag for your garbage.', icon: '🗑️' },
+      { title: 'Use Both Hands for Business Cards', explanation: 'Receive and present gifts, cards, or payment trays using both hands.', icon: '🤲' }
+    ],
+    donts: [
+      { title: 'Never Stick Chopsticks Vertically in Rice', explanation: 'Sticking chopsticks vertically resembles funeral incense rites. Place them on the holder.', icon: '🥢' },
+      { title: 'Avoid Eating While Walking', explanation: 'Consume street food directly near the stall rather than walking through crowds.', icon: '🍡' },
+      { title: 'Never Talk Loudly on Trains', explanation: 'Keep cellphones on silent mode and avoid phone calls on public transit.', icon: '🔇' }
+    ],
+    tabooWarnings: [
+      'Bathing in onsens with visible tattoos without covering them with waterproof bandages or booking private baths.',
+      'Photographing Geishas/Maikos in Gion without explicit permission.'
+    ]
+  },
+  'dest-2': {
+    destinationId: 'dest-2',
+    country: 'Greece',
+    tippingCustoms: '💶 Tipping 5-10% is customary in tavernas if service is not included in the bill.',
+    dressCodeRules: '👗 Cover shoulders and knees when visiting Orthodox churches and monasteries.',
+    dos: [
+      { title: 'Say "Kalimera" in the Morning', explanation: 'Locals appreciate friendly morning greetings when entering shops.', icon: '🌅' },
+      { title: 'Embrace Leisurely Dining Pace', explanation: 'Meals in Greece are unhurried social events lasting 2+ hours.', icon: '🍷' }
+    ],
+    donts: [
+      { title: 'Never Flush Toilet Paper', explanation: 'Santorini plumbing is narrow; dispose of toilet paper in the designated bin.', icon: '🚽' },
+      { title: 'Avoid Open-Palm Gestures (Mounza)', explanation: 'Extending your open hand towards someone is considered offensive.', icon: '✋' }
+    ],
+    tabooWarnings: [
+      'Climbing onto church domes or private whitewashed roofs for Instagram photos.'
+    ]
+  },
+  'dest-3': {
+    destinationId: 'dest-3',
+    country: 'Switzerland',
+    tippingCustoms: '🇨🇭 Service charge is included by law; rounding up to the nearest 5-10 CHF is appreciated.',
+    dressCodeRules: '🥾 Functional alpine outerwear and sturdy hiking boots are expected on mountain trails.',
+    dos: [
+      { title: 'Observe Nighttime Quiet Hours', explanation: 'Maintain strict quiet hours (Ruhezeit) after 10:00 PM in villages.', icon: '🤫' },
+      { title: 'Make Direct Eye Contact When Toasting', explanation: 'Say "Prost" or "Santé" while looking directly into eyes.', icon: '🥂' }
+    ],
+    donts: [
+      { title: 'Don’t Litter or Mis-sort Recycling', explanation: 'Switzerland enforces strict waste sorting laws for glass, PET, and paper.', icon: '♻️' }
+    ],
+    tabooWarnings: [
+      'Loud shouting or playing speakers on serene alpine hiking trails.'
+    ]
+  },
+  'dest-4': {
+    destinationId: 'dest-4',
+    country: 'Tanzania',
+    tippingCustoms: '🦁 Tipping safari guides ($20-30/day) and lodge staff ($10/day) is customary and greatly appreciated.',
+    dressCodeRules: '🧥 Wear neutral khaki/olive tones; avoid dark blue/black (attracts tsetse flies) and camouflage.',
+    dos: [
+      { title: 'Always Ask Before Photographing People', explanation: 'Ask permission before photographing Maasai villagers.', icon: '📸' },
+      { title: 'Greet Elders First with Respect', explanation: 'Say "Shikamoo" to elders as a sign of traditional reverence.', icon: '🤝' }
+    ],
+    donts: [
+      { title: 'Never Point with Index Finger', explanation: 'Use your full hand or chin gesture to indicate directions.', icon: '👉' },
+      { title: 'Avoid Public Displays of Affection', explanation: 'Refrain from excessive public affection outside private resorts.', icon: '🤝' }
+    ],
+    tabooWarnings: [
+      'Standing up or leaning out of safari vehicles near wild lions or elephants.'
+    ]
+  }
+};
+
 export const INITIAL_EMERGENCY_CONTACTS: Record<string, EmergencyContact> = {
   'dest-1': {
     destinationId: 'dest-1',
@@ -287,63 +376,16 @@ export const INITIAL_EMERGENCY_CONTACTS: Record<string, EmergencyContact> = {
     fireNumber: '119',
     generalEmergencyNumber: '110 / 119',
     embassies: [
-      { countryName: 'United States', flag: '🇺🇸', phone: '+81 3 3224 5000', address: '1-10-5 Akasaka, Minato-ku, Tokyo', website: 'jp.usembassy.gov' },
-      { countryName: 'United Kingdom', flag: '🇬🇧', phone: '+81 3 5244 5000', address: '1 Ichiban-cho, Chiyoda-ku, Tokyo', website: 'gov.uk/world/japan' },
-      { countryName: 'Canada', flag: '🇨🇦', phone: '+81 3 5412 6200', address: '7-3-38 Akasaka, Minato-ku, Tokyo', website: 'canada.ca/japan' }
+      { countryName: 'United States', flag: '🇺🇸', phone: '+81 3 3224 5000', address: '1-10-5 Akasaka, Minato-ku, Tokyo', website: 'jp.usembassy.gov' }
     ],
     hospitals: [
-      { name: 'Kyoto University Hospital', phone: '+81 75 751 3111', address: '54 Shogoin Kawahara-cho, Sakyo-ku, Kyoto', is247: true },
-      { name: 'Japan Baptist Hospital', phone: '+81 75 781 5191', address: '47 Yamanomoto-cho, Kitashirakawa, Sakyo-ku, Kyoto', is247: true }
-    ]
-  },
-  'dest-2': {
-    destinationId: 'dest-2',
-    country: 'Greece',
-    policeNumber: '100',
-    ambulanceNumber: '166',
-    fireNumber: '199',
-    generalEmergencyNumber: '112',
-    embassies: [
-      { countryName: 'United States', flag: '🇺🇸', phone: '+30 210 721 2951', address: '91 Vasilis Sophias Avenue, Athens', website: 'gr.usembassy.gov' },
-      { countryName: 'United Kingdom', flag: '🇬🇧', phone: '+30 210 727 2600', address: '1 Ploutarchou Street, Athens', website: 'gov.uk/world/greece' }
-    ],
-    hospitals: [
-      { name: 'General Hospital of Thira (Santorini)', phone: '+30 2286 035300', address: 'Karterados, Santorini 84700', is247: true }
-    ]
-  },
-  'dest-3': {
-    destinationId: 'dest-3',
-    country: 'Switzerland',
-    policeNumber: '117',
-    ambulanceNumber: '144',
-    fireNumber: '118',
-    generalEmergencyNumber: '112',
-    embassies: [
-      { countryName: 'United States', flag: '🇺🇸', phone: '+41 31 357 7011', address: 'Sulgeneckstrasse 19, Bern', website: 'ch.usembassy.gov' }
-    ],
-    hospitals: [
-      { name: 'Inselspital University Hospital Bern', phone: '+41 31 632 2111', address: 'Freiburgstrasse 18, 3010 Bern', is247: true }
-    ]
-  },
-  'dest-4': {
-    destinationId: 'dest-4',
-    country: 'Tanzania',
-    policeNumber: '112',
-    ambulanceNumber: '114',
-    fireNumber: '115',
-    generalEmergencyNumber: '112',
-    embassies: [
-      { countryName: 'United States', flag: '🇺🇸', phone: '+255 22 229 4000', address: '686 Old Bagamoyo Road, Dar es Salaam', website: 'tz.usembassy.gov' }
-    ],
-    hospitals: [
-      { name: 'Aga Khan Hospital Dar es Salaam', phone: '+255 22 211 5151', address: 'Ocean Road, Dar es Salaam', is247: true }
+      { name: 'Kyoto University Hospital', phone: '+81 75 751 3111', address: '54 Shogoin Kawahara-cho, Sakyo-ku, Kyoto', is247: true }
     ]
   }
 };
 
 export const INITIAL_PASSPORT_STAMPS: PassportStamp[] = [
-  { id: 'stamp-1', destinationId: 'dest-1', stampName: 'Kyoto Zen Master', icon: '💮', description: 'Explored ancient wooden temples and bamboo groves in Kyoto.', badgeType: 'Visited', countryCode: 'JP' },
-  { id: 'stamp-2', destinationId: 'dest-2', stampName: 'Aegean Caldera Explorer', icon: '🏛️', description: 'Watched the sunset over Santorini whitewashed cliffside villas.', badgeType: 'Visited', countryCode: 'GR' }
+  { id: 'stamp-1', destinationId: 'dest-1', stampName: 'Kyoto Zen Master', icon: '💮', description: 'Explored ancient wooden temples and bamboo groves in Kyoto.', badgeType: 'Visited', countryCode: 'JP' }
 ];
 
 export const INITIAL_PHRASEBOOK: PhraseItem[] = [
@@ -429,6 +471,7 @@ export const useTravelStore = defineStore('travel', {
     phrasebook: INITIAL_PHRASEBOOK as PhraseItem[],
     passportStamps: INITIAL_PASSPORT_STAMPS as PassportStamp[],
     emergencyContacts: INITIAL_EMERGENCY_CONTACTS as Record<string, EmergencyContact>,
+    culturalGuides: INITIAL_CULTURAL_GUIDES as Record<string, CulturalGuide>,
     unlockedStampIds: ['stamp-1'] as string[],
 
     selectedRegion: 'All' as string,
@@ -477,7 +520,8 @@ export const useTravelStore = defineStore('travel', {
     selectedPhraseLanguage: 'Japanese' as 'Japanese' | 'Greek' | 'German' | 'Swahili',
     selectedPhraseCategory: 'All' as 'All' | PhraseCategory,
 
-    activeEmergencyDestId: 'dest-1' as string
+    activeEmergencyDestId: 'dest-1' as string,
+    activeEtiquetteDestId: 'dest-1' as string
   }),
 
   getters: {
@@ -628,6 +672,13 @@ export const useTravelStore = defineStore('travel', {
       return (destId?: string): EmergencyContact => {
         const id = destId || state.activeEmergencyDestId;
         return state.emergencyContacts[id] || state.emergencyContacts['dest-1'];
+      };
+    },
+
+    getCulturalGuideForDestination: (state) => {
+      return (destId?: string): CulturalGuide => {
+        const id = destId || state.activeEtiquetteDestId;
+        return state.culturalGuides[id] || state.culturalGuides['dest-1'];
       };
     }
   },
@@ -983,9 +1034,13 @@ export const useTravelStore = defineStore('travel', {
       return this.unlockedStampIds.includes(stampId);
     },
 
-    // Emergency Actions
     setActiveEmergencyDestId(destId: string) {
       this.activeEmergencyDestId = destId;
+    },
+
+    // Cultural Etiquette Actions
+    setActiveEtiquetteDestId(destId: string) {
+      this.activeEtiquetteDestId = destId;
     }
   }
 });

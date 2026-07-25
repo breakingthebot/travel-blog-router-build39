@@ -49,16 +49,16 @@ describe('travelStore Pinia store', () => {
     expect(budgetUsd.currencySymbol).toBe('$');
   });
 
-  it('should retrieve emergency hotline numbers and embassy lists for selected destination', () => {
+  it('should retrieve local cultural etiquette rules, tipping customs, and Do/Dont guidelines', () => {
     const store = useTravelStore();
-    const emergencyKyoto = store.getEmergencyContactForDestination('dest-1');
-    expect(emergencyKyoto.policeNumber).toBe('110');
-    expect(emergencyKyoto.ambulanceNumber).toBe('119');
-    expect(emergencyKyoto.embassies.length).toBe(3);
+    const guideKyoto = store.getCulturalGuideForDestination('dest-1');
+    expect(guideKyoto.country).toBe('Japan');
+    expect(guideKyoto.dos.length).toBe(3);
+    expect(guideKyoto.donts.length).toBe(3);
 
-    store.setActiveEmergencyDestId('dest-2');
-    const emergencySantorini = store.getEmergencyContactForDestination();
-    expect(emergencySantorini.country).toBe('Greece');
-    expect(emergencySantorini.generalEmergencyNumber).toBe('112');
+    store.setActiveEtiquetteDestId('dest-2');
+    const guideSantorini = store.getCulturalGuideForDestination();
+    expect(guideSantorini.country).toBe('Greece');
+    expect(guideSantorini.donts[0].title).toContain('Toilet Paper');
   });
 });

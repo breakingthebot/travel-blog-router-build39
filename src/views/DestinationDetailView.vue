@@ -21,6 +21,7 @@ import CurrencyCalculator from '../components/CurrencyCalculator.vue';
 import TravelPhrasebook from '../components/TravelPhrasebook.vue';
 import PassportTracker from '../components/PassportTracker.vue';
 import EmergencyContactsWidget from '../components/EmergencyContactsWidget.vue';
+import CulturalEtiquetteGuide from '../components/CulturalEtiquetteGuide.vue';
 
 const route = useRoute();
 const travelStore = useTravelStore();
@@ -73,6 +74,7 @@ const relatedPosts = computed(() => {
         <TravelPhrasebook class="margin-top-calc" />
         <PassportTracker class="margin-top-calc" />
         <EmergencyContactsWidget :destination-id="destination.id" class="margin-top-calc" />
+        <CulturalEtiquetteGuide :destination-id="destination.id" class="margin-top-calc" />
         <PackingChecklist class="margin-top-calc" />
       </div>
 

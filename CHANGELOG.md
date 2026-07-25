@@ -5,6 +5,16 @@ All notable changes to **Build 39 — TravelPulse Vue Router Multi-page Travel B
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.17.0] - 2026-07-25
+
+### Added
+- Built `src/components/CulturalEtiquetteGuide.vue` providing an interactive destination cultural etiquette & Do's and Don'ts guide.
+- Added tipping customs guidelines and dress code rules for major travel destinations.
+- Added side-by-side Do's (green highlight) and Don'ts (red highlight) cards with cultural icons.
+- Added major taboo callout boxes alerting travelers to high-risk cultural faux pas.
+- Integrated `CulturalEtiquetteGuide.vue` into `DestinationDetailView.vue` and `DestinationsView.vue`.
+- Added unit tests in `src/stores/travelStore.spec.ts` testing cultural guide retrieval per destination.
+
 ## [0.16.0] - 2026-07-25
 
 ### Added

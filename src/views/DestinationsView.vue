@@ -20,6 +20,7 @@ import CurrencyCalculator from '../components/CurrencyCalculator.vue';
 import TravelPhrasebook from '../components/TravelPhrasebook.vue';
 import PassportTracker from '../components/PassportTracker.vue';
 import EmergencyContactsWidget from '../components/EmergencyContactsWidget.vue';
+import CulturalEtiquetteGuide from '../components/CulturalEtiquetteGuide.vue';
 
 const travelStore = useTravelStore();
 const regions = ['All', 'Europe', 'Asia', 'Africa', 'Americas'];
@@ -122,6 +123,11 @@ const regions = ['All', 'Europe', 'Asia', 'Africa', 'Americas'];
     <!-- Destination Emergency Contacts & Embassies -->
     <section class="margin-top">
       <EmergencyContactsWidget />
+    </section>
+
+    <!-- Local Cultural Etiquette & Do's and Don'ts -->
+    <section class="margin-top">
+      <CulturalEtiquetteGuide />
     </section>
 
     <!-- Expenses Analytics & Export Tool -->
