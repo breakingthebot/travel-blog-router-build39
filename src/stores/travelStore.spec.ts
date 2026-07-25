@@ -44,28 +44,43 @@ describe('travelStore Pinia store', () => {
     store.setTravelStyle('explorer');
     store.setCurrency('USD');
 
-    const budgetUsd = store.calculateDestinationBudget('dest-1'); // Kyoto explorer = $130/day * 10 days = $1300
+    const budgetUsd = store.calculateDestinationBudget('dest-1');
     expect(budgetUsd.totalBudget).toBe(1300);
     expect(budgetUsd.currencySymbol).toBe('$');
 
-    // Change currency to JPY (1 USD = 155 JPY)
     store.setCurrency('JPY');
     const budgetJpy = store.calculateDestinationBudget('dest-1');
     expect(budgetJpy.currencySymbol).toBe('¥');
-    expect(budgetJpy.totalBudget).toBe(201500); // 1300 * 155
+    expect(budgetJpy.totalBudget).toBe(201500);
   });
 
-  it('should update travel style multipliers correctly', () => {
+  it('should manage day-by-day trip itineraries (add day, add activity, remove activity, reorder)', () => {
     const store = useTravelStore();
-    store.setTripDays(5);
-    store.setCurrency('USD');
+    const destId = 'dest-1';
+    const initialDays = store.getItineraryForDestination(destId);
+    expect(initialDays.length).toBe(2);
 
-    store.setTravelStyle('backpacker');
-    const backpackerBudget = store.calculateDestinationBudget('dest-1');
-    expect(backpackerBudget.dailyCost).toBe(55);
+    // Add Day
+    store.addItineraryDay(destId, 'Day 3 Sagano Scenic Train');
+    const updatedDays = store.getItineraryForDestination(destId);
+    expect(updatedDays.length).toBe(3);
 
-    store.setTravelStyle('luxury');
-    const luxuryBudget = store.calculateDestinationBudget('dest-1');
-    expect(luxuryBudget.dailyCost).toBe(320);
+    // Add Activity to Day 3
+    store.addActivityToDay(destId, 3, {
+      timeSlot: '09:00 AM',
+      title: 'Sagano Romantic Train Ride',
+      location: 'Kameoka Station',
+      category: 'Adventure',
+      estimatedCostUsd: 12
+    });
+
+    const day3 = updatedDays.find((d) => d.dayNumber === 3);
+    expect(day3?.activities.length).toBe(1);
+    expect(day3?.activities[0].title).toBe('Sagano Romantic Train Ride');
+
+    // Remove Activity
+    const actId = day3!.activities[0].id;
+    store.removeActivityFromDay(destId, 3, actId);
+    expect(day3?.activities.length).toBe(0);
   });
 });

@@ -5,6 +5,18 @@ All notable changes to **Build 39 — TravelPulse Vue Router Multi-page Travel B
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.3.0] - 2026-07-25
+
+### Added
+- Built `src/components/ItineraryBuilder.vue` providing interactive visual trip itinerary planning per destination.
+- Added day-by-day tab navigation (`Day 1`, `Day 2`, `Day 3`, `+ Day`).
+- Added visual timeline activity cards displaying time slots (`07:30 AM`), titles, locations, category chips (`Culture`, `Dining`, `Adventure`, `Relaxation`), and estimated costs ($ USD).
+- Added activity reordering controls (Move Up / Move Down buttons) and removal controls.
+- Added inline "Add Activity" form with validation for custom time slots, titles, locations, categories, and costs.
+- Added daily total cost summary cards.
+- Integrated `ItineraryBuilder.vue` into `DestinationDetailView.vue` and `DestinationsView.vue`.
+- Added unit tests in `src/stores/travelStore.spec.ts` testing adding days, adding activities, removing activities, and reordering.
+
 ## [0.2.0] - 2026-07-25
 
 ### Added

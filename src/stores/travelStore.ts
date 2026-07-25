@@ -1,5 +1,5 @@
 // src/stores/travelStore.ts
-// Pinia store managing travel destinations, blog posts, photo gallery, bookmarks, and trip budget estimation calculator.
+// Pinia store managing travel destinations, blog posts, photo gallery, bookmarks, trip budget calculator, and visual trip itinerary builder.
 // Connects to: views/*.vue, components/*.vue
 // Created: 2026-07-25
 
@@ -46,6 +46,21 @@ export interface GalleryPhoto {
   photographer: string;
 }
 
+export interface ItineraryActivity {
+  id: string;
+  timeSlot: string;
+  title: string;
+  location: string;
+  category: 'Culture' | 'Dining' | 'Adventure' | 'Relaxation';
+  estimatedCostUsd: number;
+}
+
+export interface ItineraryDay {
+  dayNumber: number;
+  title: string;
+  activities: ItineraryActivity[];
+}
+
 export type TravelStyle = 'backpacker' | 'explorer' | 'luxury';
 export type CurrencyCode = 'USD' | 'EUR' | 'GBP' | 'JPY';
 
@@ -68,11 +83,7 @@ export const INITIAL_DESTINATIONS: Destination[] = [
     bestTimeToVisit: 'March to May & October to November',
     rating: 4.9,
     featured: true,
-    dailyCostsUsd: {
-      backpacker: 55,
-      explorer: 130,
-      luxury: 320
-    }
+    dailyCostsUsd: { backpacker: 55, explorer: 130, luxury: 320 }
   },
   {
     id: 'dest-2',
@@ -85,11 +96,7 @@ export const INITIAL_DESTINATIONS: Destination[] = [
     bestTimeToVisit: 'Late April to early November',
     rating: 4.8,
     featured: true,
-    dailyCostsUsd: {
-      backpacker: 75,
-      explorer: 180,
-      luxury: 450
-    }
+    dailyCostsUsd: { backpacker: 75, explorer: 180, luxury: 450 }
   },
   {
     id: 'dest-3',
@@ -102,11 +109,7 @@ export const INITIAL_DESTINATIONS: Destination[] = [
     bestTimeToVisit: 'June to September & December to March',
     rating: 4.9,
     featured: true,
-    dailyCostsUsd: {
-      backpacker: 90,
-      explorer: 210,
-      luxury: 520
-    }
+    dailyCostsUsd: { backpacker: 90, explorer: 210, luxury: 520 }
   },
   {
     id: 'dest-4',
@@ -118,13 +121,44 @@ export const INITIAL_DESTINATIONS: Destination[] = [
     description: 'The Serengeti ecosystem is a geographical region in Africa spanning northern Tanzania, famous for its massive annual migration of wildebeest and zebra.',
     bestTimeToVisit: 'January to February & June to October',
     rating: 4.9,
-    dailyCostsUsd: {
-      backpacker: 110,
-      explorer: 260,
-      luxury: 680
-    }
+    dailyCostsUsd: { backpacker: 110, explorer: 260, luxury: 680 }
   }
 ];
+
+export const DEFAULT_ITINERARIES: Record<string, ItineraryDay[]> = {
+  'dest-1': [
+    {
+      dayNumber: 1,
+      title: 'Eastern Kyoto Temples & Gion District',
+      activities: [
+        { id: 'act-101', timeSlot: '07:30 AM', title: 'Fushimi Inari Torii Gate Trail Hike', location: 'Southern Kyoto', category: 'Culture', estimatedCostUsd: 0 },
+        { id: 'act-102', timeSlot: '11:00 AM', title: 'Kiyomizu-dera Wooden Stage Tour', location: 'Higashiyama', category: 'Culture', estimatedCostUsd: 4 },
+        { id: 'act-103', timeSlot: '01:00 PM', title: 'Traditional Matcha & Wagashi Ceremony', location: 'Ninenzaka Alley', category: 'Dining', estimatedCostUsd: 15 },
+        { id: 'act-104', timeSlot: '06:00 PM', title: 'Evening Lantern Walk & Kaiseki Dinner', location: 'Gion Geisha District', category: 'Dining', estimatedCostUsd: 65 }
+      ]
+    },
+    {
+      dayNumber: 2,
+      title: 'Arashiyama Bamboo Grove & Golden Pavilion',
+      activities: [
+        { id: 'act-105', timeSlot: '06:30 AM', title: 'Arashiyama Bamboo Forest Sunrise Stroll', location: 'Western Kyoto', category: 'Relaxation', estimatedCostUsd: 0 },
+        { id: 'act-106', timeSlot: '10:00 AM', title: 'Tenryu-ji Zen Rock Garden & Teahouse', location: 'Arashiyama', category: 'Relaxation', estimatedCostUsd: 5 },
+        { id: 'act-107', timeSlot: '02:00 PM', title: 'Kinkaku-ji (Golden Pavilion) Visit', location: 'Northern Kyoto', category: 'Culture', estimatedCostUsd: 4 }
+      ]
+    }
+  ],
+  'dest-2': [
+    {
+      dayNumber: 1,
+      title: 'Fira to Oia Caldera Cliff Trail Walk',
+      activities: [
+        { id: 'act-201', timeSlot: '08:30 AM', title: 'Scenic Cliff Walk from Fira to Imerovigli', location: 'Santorini Caldera', category: 'Adventure', estimatedCostUsd: 0 },
+        { id: 'act-202', timeSlot: '01:00 PM', title: 'Fresh Seafood Lunch overlooking Ammoudi Bay', location: 'Ammoudi Bay', category: 'Dining', estimatedCostUsd: 45 },
+        { id: 'act-203', timeSlot: '06:30 PM', title: 'Sunset Photography Session at Oia Castle', location: 'Oia Village', category: 'Relaxation', estimatedCostUsd: 0 }
+      ]
+    }
+  ]
+};
 
 export const INITIAL_POSTS: BlogPost[] = [
   {
@@ -189,7 +223,10 @@ export const useTravelStore = defineStore('travel', {
       tripDays: 7 as number,
       travelStyle: 'explorer' as TravelStyle,
       currency: 'USD' as CurrencyCode
-    }
+    },
+
+    // Trip Itineraries State per Destination ID
+    itineraries: DEFAULT_ITINERARIES as Record<string, ItineraryDay[]>
   }),
 
   getters: {
@@ -222,7 +259,6 @@ export const useTravelStore = defineStore('travel', {
         const convertedDaily = dailyUsd * rateInfo.rateFromUsd;
         const convertedTotal = totalUsd * rateInfo.rateFromUsd;
 
-        // Breakdown distribution: Accom 45%, Food 30%, Transport 15%, Activities 10%
         return {
           currencySymbol: rateInfo.symbol,
           currencyCode: curr,
@@ -235,6 +271,24 @@ export const useTravelStore = defineStore('travel', {
             activities: Math.round(convertedTotal * 0.10)
           }
         };
+      };
+    },
+
+    getItineraryForDestination: (state) => {
+      return (destId: string): ItineraryDay[] => {
+        if (!state.itineraries[destId]) {
+          // Initialize default empty day if none exists
+          state.itineraries[destId] = [
+            {
+              dayNumber: 1,
+              title: 'Day 1 Exploration',
+              activities: [
+                { id: `act-${Date.now()}`, timeSlot: '09:00 AM', title: 'City Orientation Walk', location: 'City Center', category: 'Culture', estimatedCostUsd: 0 }
+              ]
+            }
+          ];
+        }
+        return state.itineraries[destId];
       };
     }
   },
@@ -277,7 +331,6 @@ export const useTravelStore = defineStore('travel', {
       this.activeLightboxImage = null;
     },
 
-    // Budget Calculator Actions
     setTripDays(days: number) {
       this.budgetConfig.tripDays = Math.max(1, Math.min(60, days));
     },
@@ -288,6 +341,53 @@ export const useTravelStore = defineStore('travel', {
 
     setCurrency(curr: CurrencyCode) {
       this.budgetConfig.currency = curr;
+    },
+
+    // Itinerary Builder Actions
+    addItineraryDay(destId: string, dayTitle?: string) {
+      const days = this.getItineraryForDestination(destId);
+      const nextDayNumber = days.length + 1;
+      days.push({
+        dayNumber: nextDayNumber,
+        title: dayTitle || `Day ${nextDayNumber} Highlights`,
+        activities: []
+      });
+    },
+
+    addActivityToDay(destId: string, dayNumber: number, activity: Omit<ItineraryActivity, 'id'>) {
+      const days = this.getItineraryForDestination(destId);
+      const targetDay = days.find((d) => d.dayNumber === dayNumber);
+      if (targetDay) {
+        targetDay.activities.push({
+          ...activity,
+          id: `act-${Date.now()}-${Math.random().toString(36).substr(2, 4)}`
+        });
+      }
+    },
+
+    removeActivityFromDay(destId: string, dayNumber: number, activityId: string) {
+      const days = this.getItineraryForDestination(destId);
+      const targetDay = days.find((d) => d.dayNumber === dayNumber);
+      if (targetDay) {
+        const idx = targetDay.activities.findIndex((a) => a.id === activityId);
+        if (idx > -1) {
+          targetDay.activities.splice(idx, 1);
+        }
+      }
+    },
+
+    moveActivity(destId: string, dayNumber: number, activityId: string, direction: 'up' | 'down') {
+      const days = this.getItineraryForDestination(destId);
+      const targetDay = days.find((d) => d.dayNumber === dayNumber);
+      if (targetDay) {
+        const idx = targetDay.activities.findIndex((a) => a.id === activityId);
+        if (idx === -1) return;
+        const newIdx = direction === 'up' ? idx - 1 : idx + 1;
+        if (newIdx >= 0 && newIdx < targetDay.activities.length) {
+          const item = targetDay.activities.splice(idx, 1)[0];
+          targetDay.activities.splice(newIdx, 0, item);
+        }
+      }
     }
   }
 });
