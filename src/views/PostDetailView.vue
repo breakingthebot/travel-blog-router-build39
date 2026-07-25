@@ -4,15 +4,39 @@
 <!-- Created: 2026-07-25 -->
 
 <script setup lang="ts">
-import { ref, computed } from 'vue';
+import { computed, onMounted, onUnmounted, ref } from 'vue';
 import { useRoute } from 'vue-router';
 import { useTravelStore } from '../stores/travelStore';
 
 const route = useRoute();
 const travelStore = useTravelStore();
 
+const scrollProgress = ref(0);
+
 const post = computed(() => {
-  return travelStore.posts.find((p) => p.id === route.params.id) || travelStore.posts[0];
+  const id = route.params.id as string;
+  return travelStore.posts.find((p) => p.id === id) || travelStore.posts[0];
+});
+
+const isSavedOffline = computed(() => {
+  return travelStore.isPostSavedOffline(post.value.id);
+});
+
+function handleScroll() {
+  const totalHeight = document.documentElement.scrollHeight - window.innerHeight;
+  if (totalHeight > 0) {
+    const currentProgress = Math.round((window.scrollY / totalHeight) * 100);
+    scrollProgress.value = currentProgress;
+    travelStore.updateReadingProgress(post.value.id, currentProgress);
+  }
+}
+
+onMounted(() => {
+  window.addEventListener('scroll', handleScroll);
+});
+
+onUnmounted(() => {
+  window.removeEventListener('scroll', handleScroll);
 });
 
 const newCommentText = ref('');
@@ -28,17 +52,29 @@ const submitComment = () => {
 </script>
 
 <template>
-  <div v-if="post" class="post-detail-view">
-    <router-link to="/blog" class="back-link">← Back to All Dispatches</router-link>
+  <div v-if="post" class="post-detail-page container">
+    <!-- Top Reading Progress Indicator -->
+    <div class="reading-progress-bar" :style="{ width: `${scrollProgress}%` }"></div>
 
-    <article class="article-card card">
+    <router-link to="/blog" class="back-link">← Back to Journal Posts</router-link>
+
+    <article class="post-article card">
       <div class="article-header">
-        <div class="author-row">
-          <img :src="post.author.avatar" :alt="post.author.name" class="author-avatar" />
-          <div class="author-info">
+        <div class="post-meta-row">
+          <span class="read-badge">⏱️ {{ post.readTimeMinutes }} min read</span>
+          <span class="date">{{ post.publishedDate }}</span>
+          
+          <button 
+            @click="travelStore.toggleSaveOfflinePost(post.id)" 
+            class="save-offline-btn"
+            :class="{ active: isSavedOffline }"
+          >
+            {{ isSavedOffline ? '⚡ Saved Offline' : '📲 Save for Offline' }}
+          </button>
+        </div>
+        <div class="author-info">
             <span class="author-name">{{ post.author.name }}</span>
             <span class="author-role">{{ post.author.role }} • {{ post.publishedDate }} • {{ post.readTimeMinutes }} min read</span>
-          </div>
         </div>
 
         <h1 class="article-title">{{ post.title }}</h1>

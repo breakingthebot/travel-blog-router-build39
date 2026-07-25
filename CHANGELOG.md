@@ -5,6 +5,16 @@ All notable changes to **Build 39 — TravelPulse Vue Router Multi-page Travel B
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.7.0] - 2026-07-25
+
+### Added
+- Built `src/components/OfflineReadingManager.vue` providing a saved articles and offline reading library manager.
+- Added top window scroll reading progress bar to `PostDetailView.vue` (0-100%).
+- Added "Save for Offline" toggle button on journal posts with LocalStorage persistence.
+- Added offline saved articles summary cards with read time, publish date, reading progress, and quick read navigation buttons.
+- Integrated `OfflineReadingManager.vue` into `BlogPostsView.vue` and `PostDetailView.vue`.
+- Added unit tests in `src/stores/travelStore.spec.ts` testing saving/unsaving posts offline, reading progress tracking, and LocalStorage persistence.
+
 ## [0.6.0] - 2026-07-25
 
 ### Added

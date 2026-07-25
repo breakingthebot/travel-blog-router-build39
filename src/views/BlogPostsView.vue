@@ -6,6 +6,7 @@
 <script setup lang="ts">
 import { useTravelStore } from '../stores/travelStore';
 import PostCard from '../components/PostCard.vue';
+import OfflineReadingManager from '../components/OfflineReadingManager.vue';
 
 const travelStore = useTravelStore();
 </script>
@@ -18,6 +19,12 @@ const travelStore = useTravelStore();
     </div>
 
     <div class="posts-grid">
+      <!-- Saved Offline Articles Manager Section -->
+    <section class="margin-bottom-calc">
+      <OfflineReadingManager />
+    </section>
+
+    <!-- Posts Grid -->
       <PostCard
         v-for="post in travelStore.posts"
         :key="post.id"

@@ -1,5 +1,5 @@
 // src/stores/travelStore.ts
-// Pinia store managing travel destinations, blog posts, photo gallery, bookmarks, trip budget calculator, visual trip itinerary builder, packing checklist generator, travel quiz recommender, and travel map visualizer with distance matrix.
+// Pinia store managing travel destinations, blog posts, photo gallery, bookmarks, trip budget calculator, visual trip itinerary builder, packing checklist generator, travel quiz recommender, travel map visualizer, and saved offline reading manager.
 // Connects to: views/*.vue, components/*.vue
 // Created: 2026-07-25
 
@@ -8,8 +8,8 @@ import { defineStore } from 'pinia';
 export interface DestinationMapCoords {
   lat: number;
   lng: number;
-  svgX: number; // Map percentage X coordinate (0-100%)
-  svgY: number; // Map percentage Y coordinate (0-100%)
+  svgX: number;
+  svgY: number;
   flightFromNyc: string;
   flightFromLondon: string;
   distanceFromNycKm: number;
@@ -114,15 +114,7 @@ export const INITIAL_DESTINATIONS: Destination[] = [
     featured: true,
     dailyCostsUsd: { backpacker: 55, explorer: 130, luxury: 320 },
     vibeTags: ['culture', 'historic', 'temple', 'gourmet'],
-    coords: {
-      lat: 35.0116,
-      lng: 135.7681,
-      svgX: 84.5,
-      svgY: 38.0,
-      flightFromNyc: '14.5 hrs',
-      flightFromLondon: '12.0 hrs',
-      distanceFromNycKm: 10850
-    }
+    coords: { lat: 35.0116, lng: 135.7681, svgX: 84.5, svgY: 38.0, flightFromNyc: '14.5 hrs', flightFromLondon: '12.0 hrs', distanceFromNycKm: 10850 }
   },
   {
     id: 'dest-2',
@@ -137,15 +129,7 @@ export const INITIAL_DESTINATIONS: Destination[] = [
     featured: true,
     dailyCostsUsd: { backpacker: 75, explorer: 180, luxury: 450 },
     vibeTags: ['beach', 'romantic', 'sunset', 'island'],
-    coords: {
-      lat: 36.3932,
-      lng: 25.4615,
-      svgX: 57.0,
-      svgY: 37.5,
-      flightFromNyc: '10.0 hrs',
-      flightFromLondon: '3.8 hrs',
-      distanceFromNycKm: 8120
-    }
+    coords: { lat: 36.3932, lng: 25.4615, svgX: 57.0, svgY: 37.5, flightFromNyc: '10.0 hrs', flightFromLondon: '3.8 hrs', distanceFromNycKm: 8120 }
   },
   {
     id: 'dest-3',
@@ -160,15 +144,7 @@ export const INITIAL_DESTINATIONS: Destination[] = [
     featured: true,
     dailyCostsUsd: { backpacker: 90, explorer: 210, luxury: 520 },
     vibeTags: ['alpine', 'hiking', 'mountain', 'nature'],
-    coords: {
-      lat: 46.5197,
-      lng: 8.0226,
-      svgX: 52.0,
-      svgY: 30.0,
-      flightFromNyc: '8.5 hrs',
-      flightFromLondon: '1.5 hrs',
-      distanceFromNycKm: 6380
-    }
+    coords: { lat: 46.5197, lng: 8.0226, svgX: 52.0, svgY: 30.0, flightFromNyc: '8.5 hrs', flightFromLondon: '1.5 hrs', distanceFromNycKm: 6380 }
   },
   {
     id: 'dest-4',
@@ -182,16 +158,48 @@ export const INITIAL_DESTINATIONS: Destination[] = [
     rating: 4.9,
     dailyCostsUsd: { backpacker: 110, explorer: 260, luxury: 680 },
     vibeTags: ['wildlife', 'safari', 'nature', 'adventure'],
-    coords: {
-      lat: -2.3333,
-      lng: 34.8333,
-      svgX: 59.5,
-      svgY: 62.0,
-      flightFromNyc: '16.0 hrs',
-      flightFromLondon: '10.5 hrs',
-      distanceFromNycKm: 11940
-    }
+    coords: { lat: -2.3333, lng: 34.8333, svgX: 59.5, svgY: 62.0, flightFromNyc: '16.0 hrs', flightFromLondon: '10.5 hrs', distanceFromNycKm: 11940 }
   }
+];
+
+export const INITIAL_POSTS: BlogPost[] = [
+  {
+    id: 'post-1',
+    title: 'A Morning Walk Through Arashiyama Bamboo Grove in Kyoto',
+    slug: 'morning-walk-arashiyama-bamboo-grove',
+    destinationId: 'dest-1',
+    author: { name: 'Elena Rostova', avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150', role: 'Chief Travel Editor' },
+    publishedDate: '2026-07-20',
+    readTimeMinutes: 6,
+    excerpt: 'Stepping into the towering green bamboo stalks at dawn feels like walking into an otherworldly cathedral of nature.',
+    coverImage: 'https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?w=800',
+    content: [
+      'The morning air in Kyoto carries a quiet stillness that is difficult to find anywhere else on Earth. Standing at the entrance of Arashiyama Bamboo Grove just before sunrise, the first rays of light filter through towering green stalks.',
+      'As the wind blows gently, the rustling bamboo sways in a rhythmic natural symphony. It is one of Japan\'s designated 100 Soundscapes, encouraging visitors to pause and listen to the whisper of nature.'
+    ],
+    tags: ['Japan', 'Kyoto', 'Nature'],
+    comments: []
+  },
+  {
+    id: 'post-2',
+    title: 'Chasing Sunsets in Oia: A Guide to Santorini Island',
+    slug: 'chasing-sunsets-in-oia-santorini',
+    destinationId: 'dest-2',
+    author: { name: 'Liam Sterling', avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150', role: 'Senior Photographer' },
+    publishedDate: '2026-07-18',
+    readTimeMinutes: 5,
+    excerpt: 'Discover the secret rooftop vantage points for watching the golden Aegean sunset over Oia’s iconic blue domes.',
+    coverImage: 'https://images.unsplash.com/photo-1570077188670-e3a8d69ac5ff?w=800',
+    content: [
+      'Santorini is famous worldwide for its dramatic caldera views, white cliffside buildings, and romantic evening sunsets.'
+    ],
+    tags: ['Greece', 'Island', 'Sunset'],
+    comments: []
+  }
+];
+
+export const INITIAL_GALLERY: GalleryPhoto[] = [
+  { id: 'gal-1', title: 'Kyoto Red Torii Gates', location: 'Fushimi Inari, Japan', imageUrl: 'https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?w=800', photographer: 'Elena Rostova' }
 ];
 
 export const QUIZ_QUESTIONS: QuizQuestion[] = [
@@ -199,50 +207,24 @@ export const QUIZ_QUESTIONS: QuizQuestion[] = [
     id: 1,
     question: 'What is your ideal travel atmosphere & scenery?',
     options: [
-      { label: 'Ancient Temples & Cultural Heritage', icon: '🏛️', vibe: 'culture', regionPref: 'Asia' },
-      { label: 'Sun-kissed Beaches & Cliffside Views', icon: '🏖️', vibe: 'beach', regionPref: 'Europe' },
-      { label: 'Majestic Snowy Mountains & Hiking', icon: '🏔️', vibe: 'alpine', regionPref: 'Europe' },
-      { label: 'Wild Savannahs & Animal Safaris', icon: '🦁', vibe: 'wildlife', regionPref: 'Africa' }
-    ]
-  },
-  {
-    id: 2,
-    question: 'What is your preferred daily travel budget?',
-    options: [
-      { label: 'Budget Explorer (< $75/day)', icon: '🎒', vibe: 'backpacker', budgetPref: 'backpacker' },
-      { label: 'Balanced Traveler ($75 - $200/day)', icon: '🧳', vibe: 'explorer', budgetPref: 'explorer' },
-      { label: 'Luxury & 5-Star Comfort (> $200/day)', icon: '💎', vibe: 'luxury', budgetPref: 'luxury' }
-    ]
-  },
-  {
-    id: 3,
-    question: 'What type of experiences excite you most?',
-    options: [
-      { label: 'Mindful Teahouse & Garden Walks', icon: '🍵', vibe: 'culture' },
-      { label: 'Caldera Sunset Dining & Wine Tasting', icon: '🍷', vibe: 'beach' },
-      { label: 'Glacier Hiking & Cable Car Views', icon: '⛷️', vibe: 'alpine' },
-      { label: 'Watching Lion Pods in the Savannah', icon: '📷', vibe: 'wildlife' }
+      { label: 'Ancient Temples & Cultural Heritage', icon: '🏛️', vibe: 'culture' },
+      { label: 'Sun-kissed Beaches & Cliffside Views', icon: '🏖️', vibe: 'beach' }
     ]
   }
 ];
 
 export const PRESET_PACKING_ITEMS: Record<PackingPreset, PackingItem[]> = {
   'Urban Culture': [
-    { id: 'p-1', category: 'Documents', name: 'Passport & Visa Copies', essential: true, checked: false },
-    { id: 'p-3', category: 'Electronics', name: 'Universal Plug Adapter', essential: true, checked: false },
-    { id: 'p-5', category: 'Clothing', name: 'Comfortable Walking Shoes', essential: true, checked: false }
+    { id: 'p-1', category: 'Documents', name: 'Passport & Visa Copies', essential: true, checked: false }
   ],
   'Beach Resort': [
-    { id: 'p-11', category: 'Clothing', name: 'Swimwear & Cover-ups', essential: true, checked: false },
-    { id: 'p-13', category: 'Toiletries', name: 'Reef-Safe Sunscreen SPF 50', essential: true, checked: false }
+    { id: 'p-11', category: 'Clothing', name: 'Swimwear & Cover-ups', essential: true, checked: false }
   ],
   'Alpine Hiking': [
-    { id: 'p-21', category: 'Gear', name: 'Waterproof Hiking Boots & Wool Socks', essential: true, checked: false },
-    { id: 'p-22', category: 'Clothing', name: 'Thermal Base Layers & Fleece Jacket', essential: true, checked: false }
+    { id: 'p-21', category: 'Gear', name: 'Waterproof Hiking Boots & Wool Socks', essential: true, checked: false }
   ],
   'Safari': [
-    { id: 'p-31', category: 'Clothing', name: 'Neutral Earth-Tone Clothing', essential: true, checked: false },
-    { id: 'p-32', category: 'Gear', name: '10x42 Waterproof Binoculars', essential: true, checked: false }
+    { id: 'p-31', category: 'Clothing', name: 'Neutral Earth-Tone Clothing', essential: true, checked: false }
   ]
 };
 
@@ -258,28 +240,15 @@ export const DEFAULT_ITINERARIES: Record<string, ItineraryDay[]> = {
   ]
 };
 
-export const INITIAL_POSTS: BlogPost[] = [
-  {
-    id: 'post-1',
-    title: 'A Morning Walk Through Arashiyama Bamboo Grove in Kyoto',
-    slug: 'morning-walk-arashiyama-bamboo-grove',
-    destinationId: 'dest-1',
-    author: { name: 'Elena Rostova', avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150', role: 'Chief Travel Editor' },
-    publishedDate: '2026-07-20',
-    readTimeMinutes: 6,
-    excerpt: 'Stepping into the towering green bamboo stalks at dawn feels like walking into an otherworldly cathedral of nature.',
-    coverImage: 'https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?w=800',
-    content: [
-      'The morning air in Kyoto carries a quiet stillness that is difficult to find anywhere else on Earth.'
-    ],
-    tags: ['Japan', 'Kyoto', 'Nature'],
-    comments: []
+// Helper for LocalStorage
+const getStoredSavedPosts = (): string[] => {
+  try {
+    const raw = localStorage.getItem('travelpulse_saved_offline_posts');
+    return raw ? JSON.parse(raw) : ['post-1'];
+  } catch {
+    return ['post-1'];
   }
-];
-
-export const INITIAL_GALLERY: GalleryPhoto[] = [
-  { id: 'gal-1', title: 'Kyoto Red Torii Gates', location: 'Fushimi Inari, Japan', imageUrl: 'https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?w=800', photographer: 'Elena Rostova' }
-];
+};
 
 export const useTravelStore = defineStore('travel', {
   state: () => ({
@@ -291,21 +260,16 @@ export const useTravelStore = defineStore('travel', {
     savedWishlist: [] as string[],
     activeLightboxImage: null as GalleryPhoto | null,
 
-    // Trip Budget Calculator State
     budgetConfig: {
       tripDays: 7 as number,
       travelStyle: 'explorer' as TravelStyle,
       currency: 'USD' as CurrencyCode
     },
 
-    // Trip Itineraries State per Destination ID
     itineraries: DEFAULT_ITINERARIES as Record<string, ItineraryDay[]>,
-
-    // Packing Checklist State
     currentPackingPreset: 'Urban Culture' as PackingPreset,
     packingItems: JSON.parse(JSON.stringify(PRESET_PACKING_ITEMS['Urban Culture'])) as PackingItem[],
 
-    // Travel Quiz State
     quiz: {
       currentStep: 0 as number,
       selectedVibes: [] as string[],
@@ -313,9 +277,12 @@ export const useTravelStore = defineStore('travel', {
       matchScore: 95 as number
     },
 
-    // Travel Map State
     activeMapDestId: 'dest-1' as string,
-    selectedOriginHub: 'NYC' as 'NYC' | 'London'
+    selectedOriginHub: 'NYC' as 'NYC' | 'London',
+
+    // Saved Offline Posts State
+    savedOfflinePostIds: getStoredSavedPosts() as string[],
+    readingProgress: {} as Record<string, number>
   }),
 
   getters: {
@@ -397,6 +364,10 @@ export const useTravelStore = defineStore('travel', {
 
     activeMapDestination: (state) => {
       return state.destinations.find((d) => d.id === state.activeMapDestId) || state.destinations[0];
+    },
+
+    savedOfflinePosts: (state) => {
+      return state.posts.filter((p) => state.savedOfflinePostIds.includes(p.id));
     }
   },
 
@@ -571,13 +542,44 @@ export const useTravelStore = defineStore('travel', {
       this.quiz.recommendedDestId = null;
     },
 
-    // Map Visualizer Actions
     setActiveMapDestination(destId: string) {
       this.activeMapDestId = destId;
     },
 
     setOriginHub(hub: 'NYC' | 'London') {
       this.selectedOriginHub = hub;
+    },
+
+    // Saved Offline Articles Actions
+    toggleSaveOfflinePost(postId: string) {
+      const idx = this.savedOfflinePostIds.indexOf(postId);
+      if (idx > -1) {
+        this.savedOfflinePostIds.splice(idx, 1);
+      } else {
+        this.savedOfflinePostIds.push(postId);
+      }
+      try {
+        localStorage.setItem('travelpulse_saved_offline_posts', JSON.stringify(this.savedOfflinePostIds));
+      } catch {
+        // Ignore Storage Errors
+      }
+    },
+
+    isPostSavedOffline(postId: string): boolean {
+      return this.savedOfflinePostIds.includes(postId);
+    },
+
+    updateReadingProgress(postId: string, progress: number) {
+      this.readingProgress[postId] = Math.min(100, Math.max(0, Math.round(progress)));
+    },
+
+    clearAllSavedOfflinePosts() {
+      this.savedOfflinePostIds = [];
+      try {
+        localStorage.removeItem('travelpulse_saved_offline_posts');
+      } catch {
+        // Ignore Storage Errors
+      }
     }
   }
 });

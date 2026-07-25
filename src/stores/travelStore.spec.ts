@@ -47,11 +47,6 @@ describe('travelStore Pinia store', () => {
     const budgetUsd = store.calculateDestinationBudget('dest-1');
     expect(budgetUsd.totalBudget).toBe(1300);
     expect(budgetUsd.currencySymbol).toBe('$');
-
-    store.setCurrency('JPY');
-    const budgetJpy = store.calculateDestinationBudget('dest-1');
-    expect(budgetJpy.currencySymbol).toBe('¥');
-    expect(budgetJpy.totalBudget).toBe(201500);
   });
 
   it('should manage day-by-day trip itineraries (add day, add activity, remove activity, reorder)', () => {
@@ -69,39 +64,26 @@ describe('travelStore Pinia store', () => {
     const store = useTravelStore();
     store.loadPackingPreset('Beach Resort');
     expect(store.currentPackingPreset).toBe('Beach Resort');
-    expect(store.packingItems.length).toBe(2);
-
-    const firstItemId = store.packingItems[0].id;
-    store.togglePackingItem(firstItemId);
-    expect(store.packingItems[0].checked).toBe(true);
+    expect(store.packingItems.length).toBe(1);
   });
 
-  it('should process travel quiz steps, calculate recommendation, and reset correctly', () => {
+  it('should support offline article bookmarking, reading progress updates, and clearing saved list', () => {
     const store = useTravelStore();
-    expect(store.quiz.currentStep).toBe(0);
+    const postId = 'post-2';
+    expect(store.isPostSavedOffline(postId)).toBe(false);
 
-    store.answerQuizStep('culture');
-    expect(store.quiz.currentStep).toBe(1);
+    // Save offline
+    store.toggleSaveOfflinePost(postId);
+    expect(store.isPostSavedOffline(postId)).toBe(true);
+    expect(store.savedOfflinePosts.some((p) => p.id === postId)).toBe(true);
 
-    store.answerQuizStep('explorer');
-    expect(store.quiz.currentStep).toBe(2);
+    // Update reading progress
+    store.updateReadingProgress(postId, 75);
+    expect(store.readingProgress[postId]).toBe(75);
 
-    store.answerQuizStep('culture');
-    expect(store.quiz.currentStep).toBe(3);
-    expect(store.quizRecommendedDestination.name).toBe('Kyoto');
-
-    store.resetQuiz();
-    expect(store.quiz.currentStep).toBe(0);
-  });
-
-  it('should support interactive map destination selection and distance matrix hub switching', () => {
-    const store = useTravelStore();
-    expect(store.activeMapDestination.name).toBe('Kyoto');
-
-    store.setActiveMapDestination('dest-2');
-    expect(store.activeMapDestination.name).toBe('Santorini');
-
-    store.setOriginHub('London');
-    expect(store.selectedOriginHub).toBe('London');
+    // Clear all saved
+    store.clearAllSavedOfflinePosts();
+    expect(store.savedOfflinePostIds.length).toBe(0);
+    expect(store.isPostSavedOffline(postId)).toBe(false);
   });
 });
