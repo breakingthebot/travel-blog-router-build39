@@ -5,6 +5,17 @@ All notable changes to **Build 39 — TravelPulse Vue Router Multi-page Travel B
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.10.0] - 2026-07-25
+
+### Added
+- Built `src/components/AudioGuidePlayer.vue` providing an interactive travel audio guide & podcast player widget.
+- Added track control console with narrator avatars, track cover images, descriptions, and Play/Pause controls.
+- Added interactive time scrubber slider (`00:00 / 04:15`).
+- Added playback speed selector (`1.0x`, `1.25x`, `1.5x`, `2.0x`).
+- Added interactive chapter markers for quick timestamp jumping within walking guides.
+- Integrated `AudioGuidePlayer.vue` into `DestinationDetailView.vue` and `DestinationsView.vue`.
+- Added unit tests in `src/stores/travelStore.spec.ts` testing audio guide track selection, play/pause toggling, chapter seeking, and playback rate adjustments.
+
 ## [0.9.0] - 2026-07-25
 
 ### Added

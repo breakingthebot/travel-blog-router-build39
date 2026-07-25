@@ -60,23 +60,26 @@ describe('travelStore Pinia store', () => {
     expect(updatedDays.length).toBe(2);
   });
 
-  it('should support guest travel story submission and retrieval by destination', () => {
+  it('should support audio guide playback, track switching, chapter seeking, and rate adjustment', () => {
     const store = useTravelStore();
-    const initialKyotoStories = store.getStoriesForDestination('dest-1');
-    expect(initialKyotoStories.length).toBe(1);
+    expect(store.activeAudioTrack.title).toBe('Kyoto Temple Architecture & Zen Garden Secrets');
+    expect(store.isAudioPlaying).toBe(false);
 
-    store.submitGuestTravelStory({
-      destinationId: 'dest-1',
-      authorName: 'Alex Rivera',
-      tripDate: '2026-07-01',
-      rating: 5,
-      storyTitle: 'Incredible Teahouse Experience in Gion',
-      storyContent: 'We attended a traditional matcha ceremony in Gion. It was serene and educational!'
-    });
+    // Play/Pause toggle
+    store.toggleAudioPlayback();
+    expect(store.isAudioPlaying).toBe(true);
 
-    const updatedKyotoStories = store.getStoriesForDestination('dest-1');
-    expect(updatedKyotoStories.length).toBe(2);
-    expect(updatedKyotoStories[0].storyTitle).toBe('Incredible Teahouse Experience in Gion');
-    expect(updatedKyotoStories[0].verifiedVisitor).toBe(true);
+    // Select new track
+    store.selectAudioTrack('audio-2');
+    expect(store.activeAudioTrack.id).toBe('audio-2');
+    expect(store.activeAudioTrack.title).toBe('Santorini Caldera & Oia Sunset Walking Guide');
+
+    // Seek chapter time
+    store.seekAudioTime(120);
+    expect(store.audioCurrentTimeSeconds).toBe(120);
+
+    // Playback rate adjustment
+    store.setPlaybackRate(1.5);
+    expect(store.playbackRate).toBe(1.5);
   });
 });

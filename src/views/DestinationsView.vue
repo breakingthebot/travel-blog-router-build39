@@ -13,6 +13,7 @@ import TravelQuiz from '../components/TravelQuiz.vue';
 import TravelMapVisualizer from '../components/TravelMapVisualizer.vue';
 import WeatherClimateWidget from '../components/WeatherClimateWidget.vue';
 import UserTravelStories from '../components/UserTravelStories.vue';
+import AudioGuidePlayer from '../components/AudioGuidePlayer.vue';
 
 const travelStore = useTravelStore();
 const regions = ['All', 'Europe', 'Asia', 'Africa', 'Americas'];
@@ -70,6 +71,11 @@ const regions = ['All', 'Europe', 'Asia', 'Africa', 'Americas'];
     <!-- Interactive Travel Quiz Section -->
     <section class="margin-bottom-calc">
       <TravelQuiz />
+    </section>
+
+    <!-- Immersive Travel Audio Guide Player -->
+    <section class="margin-top">
+      <AudioGuidePlayer />
     </section>
 
     <!-- Weather & Climate Guide Section -->

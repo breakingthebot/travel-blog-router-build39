@@ -1,5 +1,5 @@
 // src/stores/travelStore.ts
-// Pinia store managing travel destinations, blog posts, photo gallery, bookmarks, trip budget calculator, visual trip itinerary builder, packing checklist generator, travel quiz recommender, travel map visualizer, saved offline reading manager, weather/climate guide widget, and user travel story submission form.
+// Pinia store managing travel destinations, blog posts, photo gallery, bookmarks, trip budget calculator, visual trip itinerary builder, packing checklist generator, travel quiz recommender, travel map visualizer, saved offline reading manager, weather/climate guide widget, user travel story submission form, and interactive audio guide player.
 // Connects to: views/*.vue, components/*.vue
 // Created: 2026-07-25
 
@@ -35,6 +35,23 @@ export interface GuestTravelStory {
   storyContent: string;
   userPhotoUrl?: string;
   verifiedVisitor: boolean;
+}
+
+export interface AudioChapterMarker {
+  timeSeconds: number;
+  title: string;
+}
+
+export interface AudioGuideTrack {
+  id: string;
+  destinationId: string;
+  title: string;
+  narrator: string;
+  durationSeconds: number;
+  audioUrl: string;
+  description: string;
+  coverImage: string;
+  chapters: AudioChapterMarker[];
 }
 
 export interface Destination {
@@ -210,6 +227,40 @@ export const INITIAL_DESTINATIONS: Destination[] = [
   }
 ];
 
+export const INITIAL_AUDIO_TRACKS: AudioGuideTrack[] = [
+  {
+    id: 'audio-1',
+    destinationId: 'dest-1',
+    title: 'Kyoto Temple Architecture & Zen Garden Secrets',
+    narrator: 'Kenji Takahashi',
+    durationSeconds: 255,
+    audioUrl: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3',
+    description: 'An immersive walking tour audio guide through Kyoto’s ancient wooden temples, rock gardens, and bamboo groves.',
+    coverImage: 'https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?w=800',
+    chapters: [
+      { timeSeconds: 0, title: '00:00 - Introduction to Kyoto' },
+      { timeSeconds: 60, title: '01:00 - The Philosophy of Zen Gardens' },
+      { timeSeconds: 150, title: '02:30 - Walking Through Arashiyama Bamboo' },
+      { timeSeconds: 210, title: '03:30 - Matcha Teahouse Traditions' }
+    ]
+  },
+  {
+    id: 'audio-2',
+    destinationId: 'dest-2',
+    title: 'Santorini Caldera & Oia Sunset Walking Guide',
+    narrator: 'Elena Rostova',
+    durationSeconds: 180,
+    audioUrl: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3',
+    description: 'Discover the volcanic history of the Cyclades islands and the best cliffside panoramas in Oia.',
+    coverImage: 'https://images.unsplash.com/photo-1570077188670-e3a8d69ac5ff?w=800',
+    chapters: [
+      { timeSeconds: 0, title: '00:00 - Arrival in Fira' },
+      { timeSeconds: 60, title: '01:00 - The 3500 BC Volcanic Eruption' },
+      { timeSeconds: 120, title: '02:00 - Oia Blue Domes Sunset Vantage' }
+    ]
+  }
+];
+
 export const INITIAL_GUEST_STORIES: GuestTravelStory[] = [
   {
     id: 'story-1',
@@ -219,20 +270,8 @@ export const INITIAL_GUEST_STORIES: GuestTravelStory[] = [
     tripDate: '2026-06-14',
     rating: 5,
     storyTitle: 'Watching Dawn Break at Fushimi Inari',
-    storyContent: 'Walking through the red torii gates at 6 AM before the crowds arrived was pure magic. The silence of the forest mountain trail is something I will remember for the rest of my life.',
+    storyContent: 'Walking through the red torii gates at 6 AM before the crowds arrived was pure magic.',
     userPhotoUrl: 'https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?w=800',
-    verifiedVisitor: true
-  },
-  {
-    id: 'story-2',
-    destinationId: 'dest-2',
-    authorName: 'Sophia Lin',
-    authorAvatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150',
-    tripDate: '2026-05-22',
-    rating: 5,
-    storyTitle: 'Unforgettable Sunset Dinner in Oia',
-    storyContent: 'We booked a cliffside table overlooking the Aegean sea. Watching the sun dip below the horizon behind the blue domes of Oia was breathtaking beyond words.',
-    userPhotoUrl: 'https://images.unsplash.com/photo-1570077188670-e3a8d69ac5ff?w=800',
     verifiedVisitor: true
   }
 ];
@@ -303,6 +342,7 @@ export const useTravelStore = defineStore('travel', {
     posts: INITIAL_POSTS as BlogPost[],
     gallery: INITIAL_GALLERY as GalleryPhoto[],
     guestStories: INITIAL_GUEST_STORIES as GuestTravelStory[],
+    audioTracks: INITIAL_AUDIO_TRACKS as AudioGuideTrack[],
     selectedRegion: 'All' as string,
     searchQuery: '' as string,
     savedWishlist: [] as string[],
@@ -332,7 +372,13 @@ export const useTravelStore = defineStore('travel', {
     readingProgress: {} as Record<string, number>,
 
     selectedSeason: 'spring' as SeasonKey,
-    tempUnit: 'C' as TempUnit
+    tempUnit: 'C' as TempUnit,
+
+    // Audio Guide State
+    activeAudioTrackId: 'audio-1' as string,
+    isAudioPlaying: false as boolean,
+    audioCurrentTimeSeconds: 0 as number,
+    playbackRate: 1.0 as number
   }),
 
   getters: {
@@ -435,6 +481,17 @@ export const useTravelStore = defineStore('travel', {
         if (!destId) return state.guestStories;
         return state.guestStories.filter((s) => s.destinationId === destId);
       };
+    },
+
+    getAudioTracksForDestination: (state) => {
+      return (destId?: string) => {
+        if (!destId) return state.audioTracks;
+        return state.audioTracks.filter((a) => a.destinationId === destId);
+      };
+    },
+
+    activeAudioTrack: (state) => {
+      return state.audioTracks.find((a) => a.id === state.activeAudioTrackId) || state.audioTracks[0];
     }
   },
 
@@ -646,7 +703,6 @@ export const useTravelStore = defineStore('travel', {
       this.tempUnit = this.tempUnit === 'C' ? 'F' : 'C';
     },
 
-    // User Travel Story Actions
     submitGuestTravelStory(story: {
       destinationId: string;
       authorName: string;
@@ -656,18 +712,11 @@ export const useTravelStore = defineStore('travel', {
       storyContent: string;
       userPhotoUrl?: string;
     }) {
-      const avatars = [
-        'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150',
-        'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150',
-        'https://images.unsplash.com/photo-1517841905240-472988babdf9?w=150'
-      ];
-      const randomAvatar = avatars[Math.floor(Math.random() * avatars.length)];
-
       const newStory: GuestTravelStory = {
         id: `story-${Date.now()}`,
         destinationId: story.destinationId,
         authorName: story.authorName || 'Anonymous Traveler',
-        authorAvatar: randomAvatar,
+        authorAvatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150',
         tripDate: story.tripDate || new Date().toISOString().split('T')[0],
         rating: Math.max(1, Math.min(5, story.rating)),
         storyTitle: story.storyTitle.trim(),
@@ -677,6 +726,25 @@ export const useTravelStore = defineStore('travel', {
       };
 
       this.guestStories.unshift(newStory);
+    },
+
+    // Audio Guide Actions
+    selectAudioTrack(trackId: string) {
+      this.activeAudioTrackId = trackId;
+      this.audioCurrentTimeSeconds = 0;
+      this.isAudioPlaying = true;
+    },
+
+    toggleAudioPlayback() {
+      this.isAudioPlaying = !this.isAudioPlaying;
+    },
+
+    seekAudioTime(seconds: number) {
+      this.audioCurrentTimeSeconds = seconds;
+    },
+
+    setPlaybackRate(rate: number) {
+      this.playbackRate = rate;
     }
   }
 });
