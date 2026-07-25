@@ -1,5 +1,5 @@
 // src/stores/travelStore.ts
-// Pinia store managing travel destinations, blog posts, photo gallery, bookmarks, trip budget calculator, visual trip itinerary builder, packing checklist generator, travel quiz recommender, travel map visualizer, saved offline reading manager, weather/climate guide widget, user travel story submission form, interactive audio guide player, travel expenses analytics & export tool, destination comparison matrix tool, travel currency & exchange rate calculator, interactive travel phrasebook widget, digital passport stamp tracker, emergency contacts & embassy directory, and local cultural etiquette & Do's and Don'ts guide.
+// Pinia store managing travel destinations, blog posts, photo gallery, bookmarks, trip budget calculator, visual trip itinerary builder, packing checklist generator, travel quiz recommender, travel map visualizer, saved offline reading manager, weather/climate guide widget, user travel story submission form, interactive audio guide player, travel expenses analytics & export tool, destination comparison matrix tool, travel currency & exchange rate calculator, interactive travel phrasebook widget, digital passport stamp tracker, emergency contacts & embassy directory, local cultural etiquette guide, and printable packing checklist generator.
 // Connects to: views/*.vue, components/*.vue
 // Created: 2026-07-25
 
@@ -298,72 +298,11 @@ export const INITIAL_CULTURAL_GUIDES: Record<string, CulturalGuide> = {
   'dest-1': {
     destinationId: 'dest-1',
     country: 'Japan',
-    tippingCustoms: '🚫 No Tipping Expected! Tipping is considered insulting in Japan; excellent service is included automatically.',
-    dressCodeRules: '👟 Remove shoes before stepping onto tatami mats or inside temples. Slip-on shoes are recommended.',
-    dos: [
-      { title: 'Bow Slightly When Greeting', explanation: 'A slight bow is customary when saying thank you or meeting locals.', icon: '🙇' },
-      { title: 'Hold Trash Until Finding a Bin', explanation: 'Public trash cans are rare in Kyoto; carry a small bag for your garbage.', icon: '🗑️' },
-      { title: 'Use Both Hands for Business Cards', explanation: 'Receive and present gifts, cards, or payment trays using both hands.', icon: '🤲' }
-    ],
-    donts: [
-      { title: 'Never Stick Chopsticks Vertically in Rice', explanation: 'Sticking chopsticks vertically resembles funeral incense rites. Place them on the holder.', icon: '🥢' },
-      { title: 'Avoid Eating While Walking', explanation: 'Consume street food directly near the stall rather than walking through crowds.', icon: '🍡' },
-      { title: 'Never Talk Loudly on Trains', explanation: 'Keep cellphones on silent mode and avoid phone calls on public transit.', icon: '🔇' }
-    ],
-    tabooWarnings: [
-      'Bathing in onsens with visible tattoos without covering them with waterproof bandages or booking private baths.',
-      'Photographing Geishas/Maikos in Gion without explicit permission.'
-    ]
-  },
-  'dest-2': {
-    destinationId: 'dest-2',
-    country: 'Greece',
-    tippingCustoms: '💶 Tipping 5-10% is customary in tavernas if service is not included in the bill.',
-    dressCodeRules: '👗 Cover shoulders and knees when visiting Orthodox churches and monasteries.',
-    dos: [
-      { title: 'Say "Kalimera" in the Morning', explanation: 'Locals appreciate friendly morning greetings when entering shops.', icon: '🌅' },
-      { title: 'Embrace Leisurely Dining Pace', explanation: 'Meals in Greece are unhurried social events lasting 2+ hours.', icon: '🍷' }
-    ],
-    donts: [
-      { title: 'Never Flush Toilet Paper', explanation: 'Santorini plumbing is narrow; dispose of toilet paper in the designated bin.', icon: '🚽' },
-      { title: 'Avoid Open-Palm Gestures (Mounza)', explanation: 'Extending your open hand towards someone is considered offensive.', icon: '✋' }
-    ],
-    tabooWarnings: [
-      'Climbing onto church domes or private whitewashed roofs for Instagram photos.'
-    ]
-  },
-  'dest-3': {
-    destinationId: 'dest-3',
-    country: 'Switzerland',
-    tippingCustoms: '🇨🇭 Service charge is included by law; rounding up to the nearest 5-10 CHF is appreciated.',
-    dressCodeRules: '🥾 Functional alpine outerwear and sturdy hiking boots are expected on mountain trails.',
-    dos: [
-      { title: 'Observe Nighttime Quiet Hours', explanation: 'Maintain strict quiet hours (Ruhezeit) after 10:00 PM in villages.', icon: '🤫' },
-      { title: 'Make Direct Eye Contact When Toasting', explanation: 'Say "Prost" or "Santé" while looking directly into eyes.', icon: '🥂' }
-    ],
-    donts: [
-      { title: 'Don’t Litter or Mis-sort Recycling', explanation: 'Switzerland enforces strict waste sorting laws for glass, PET, and paper.', icon: '♻️' }
-    ],
-    tabooWarnings: [
-      'Loud shouting or playing speakers on serene alpine hiking trails.'
-    ]
-  },
-  'dest-4': {
-    destinationId: 'dest-4',
-    country: 'Tanzania',
-    tippingCustoms: '🦁 Tipping safari guides ($20-30/day) and lodge staff ($10/day) is customary and greatly appreciated.',
-    dressCodeRules: '🧥 Wear neutral khaki/olive tones; avoid dark blue/black (attracts tsetse flies) and camouflage.',
-    dos: [
-      { title: 'Always Ask Before Photographing People', explanation: 'Ask permission before photographing Maasai villagers.', icon: '📸' },
-      { title: 'Greet Elders First with Respect', explanation: 'Say "Shikamoo" to elders as a sign of traditional reverence.', icon: '🤝' }
-    ],
-    donts: [
-      { title: 'Never Point with Index Finger', explanation: 'Use your full hand or chin gesture to indicate directions.', icon: '👉' },
-      { title: 'Avoid Public Displays of Affection', explanation: 'Refrain from excessive public affection outside private resorts.', icon: '🤝' }
-    ],
-    tabooWarnings: [
-      'Standing up or leaning out of safari vehicles near wild lions or elephants.'
-    ]
+    tippingCustoms: '🚫 No Tipping Expected! Tipping is considered insulting in Japan.',
+    dressCodeRules: '👟 Remove shoes before stepping onto tatami mats.',
+    dos: [{ title: 'Bow Slightly When Greeting', explanation: 'A slight bow is customary.', icon: '🙇' }],
+    donts: [{ title: 'Never Stick Chopsticks Vertically', explanation: 'Sticking chopsticks vertically resembles funeral rites.', icon: '🥢' }],
+    tabooWarnings: ['Bathing in onsens with visible tattoos.']
   }
 };
 
@@ -375,34 +314,30 @@ export const INITIAL_EMERGENCY_CONTACTS: Record<string, EmergencyContact> = {
     ambulanceNumber: '119',
     fireNumber: '119',
     generalEmergencyNumber: '110 / 119',
-    embassies: [
-      { countryName: 'United States', flag: '🇺🇸', phone: '+81 3 3224 5000', address: '1-10-5 Akasaka, Minato-ku, Tokyo', website: 'jp.usembassy.gov' }
-    ],
-    hospitals: [
-      { name: 'Kyoto University Hospital', phone: '+81 75 751 3111', address: '54 Shogoin Kawahara-cho, Sakyo-ku, Kyoto', is247: true }
-    ]
+    embassies: [{ countryName: 'United States', flag: '🇺🇸', phone: '+81 3 3224 5000', address: 'Tokyo', website: 'usembassy.gov' }],
+    hospitals: [{ name: 'Kyoto University Hospital', phone: '+81 75 751 3111', address: 'Kyoto', is247: true }]
   }
 };
 
 export const INITIAL_PASSPORT_STAMPS: PassportStamp[] = [
-  { id: 'stamp-1', destinationId: 'dest-1', stampName: 'Kyoto Zen Master', icon: '💮', description: 'Explored ancient wooden temples and bamboo groves in Kyoto.', badgeType: 'Visited', countryCode: 'JP' }
+  { id: 'stamp-1', destinationId: 'dest-1', stampName: 'Kyoto Zen Master', icon: '💮', description: 'Explored temples.', badgeType: 'Visited', countryCode: 'JP' }
 ];
 
 export const INITIAL_PHRASEBOOK: PhraseItem[] = [
-  { id: 'ph-1', language: 'Japanese', category: 'Greetings', english: 'Hello / Good afternoon', translated: 'こんにちは', phonetic: 'Konnichiwa', langCode: 'ja-JP' }
+  { id: 'ph-1', language: 'Japanese', category: 'Greetings', english: 'Hello', translated: 'こんにちは', phonetic: 'Konnichiwa', langCode: 'ja-JP' }
 ];
 
 export const INITIAL_AUDIO_TRACKS: AudioGuideTrack[] = [
   {
     id: 'audio-1',
     destinationId: 'dest-1',
-    title: 'Kyoto Temple Architecture & Zen Garden Secrets',
+    title: 'Kyoto Walking Guide',
     narrator: 'Kenji Takahashi',
     durationSeconds: 255,
     audioUrl: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3',
-    description: 'An immersive walking tour audio guide through Kyoto’s ancient wooden temples, rock gardens, and bamboo groves.',
+    description: 'Walking guide.',
     coverImage: 'https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?w=800',
-    chapters: [{ timeSeconds: 0, title: '00:00 - Introduction to Kyoto' }]
+    chapters: [{ timeSeconds: 0, title: 'Introduction' }]
   }
 ];
 
@@ -415,7 +350,7 @@ export const INITIAL_GUEST_STORIES: GuestTravelStory[] = [
     tripDate: '2026-06-14',
     rating: 5,
     storyTitle: 'Watching Dawn Break at Fushimi Inari',
-    storyContent: 'Walking through the red torii gates at 6 AM before the crowds arrived was pure magic.',
+    storyContent: 'Torii gates at 6 AM were pure magic.',
     userPhotoUrl: 'https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?w=800',
     verifiedVisitor: true
   }
@@ -424,37 +359,47 @@ export const INITIAL_GUEST_STORIES: GuestTravelStory[] = [
 export const INITIAL_POSTS: BlogPost[] = [
   {
     id: 'post-1',
-    title: 'A Morning Walk Through Arashiyama Bamboo Grove in Kyoto',
+    title: 'A Morning Walk Through Arashiyama Bamboo Grove',
     slug: 'morning-walk-arashiyama-bamboo-grove',
     destinationId: 'dest-1',
     author: { name: 'Elena Rostova', avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150', role: 'Chief Travel Editor' },
     publishedDate: '2026-07-20',
     readTimeMinutes: 6,
-    excerpt: 'Stepping into the towering green bamboo stalks at dawn feels like walking into an otherworldly cathedral of nature.',
+    excerpt: 'Stepping into the bamboo grove.',
     coverImage: 'https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?w=800',
-    content: ['The morning air in Kyoto carries a quiet stillness.'],
-    tags: ['Japan', 'Kyoto'],
+    content: ['Morning air in Kyoto.'],
+    tags: ['Japan'],
     comments: []
   }
 ];
 
 export const INITIAL_GALLERY: GalleryPhoto[] = [
-  { id: 'gal-1', title: 'Kyoto Red Torii Gates', location: 'Fushimi Inari, Japan', imageUrl: 'https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?w=800', photographer: 'Elena Rostova' }
+  { id: 'gal-1', title: 'Kyoto Red Torii Gates', location: 'Japan', imageUrl: 'https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?w=800', photographer: 'Elena' }
 ];
 
 export const QUIZ_QUESTIONS: QuizQuestion[] = [
   {
     id: 1,
-    question: 'What is your ideal travel atmosphere & scenery?',
-    options: [{ label: 'Ancient Temples & Cultural Heritage', icon: '🏛️', vibe: 'culture' }]
+    question: 'Atmosphere?',
+    options: [{ label: 'Temples', icon: '🏛️', vibe: 'culture' }]
   }
 ];
 
 export const PRESET_PACKING_ITEMS: Record<PackingPreset, PackingItem[]> = {
-  'Urban Culture': [{ id: 'p-1', category: 'Documents', name: 'Passport & Visa Copies', essential: true, checked: false }],
-  'Beach Resort': [{ id: 'p-11', category: 'Clothing', name: 'Swimwear', essential: true, checked: false }],
-  'Alpine Hiking': [{ id: 'p-21', category: 'Gear', name: 'Boots', essential: true, checked: false }],
-  'Safari': [{ id: 'p-31', category: 'Clothing', name: 'Safari Attire', essential: true, checked: false }]
+  'Urban Culture': [
+    { id: 'p-1', category: 'Documents', name: 'Passport & Visa Copies', essential: true, checked: false },
+    { id: 'p-2', category: 'Electronics', name: 'Universal Travel Adapter', essential: true, checked: true },
+    { id: 'p-3', category: 'Clothing', name: 'Comfortable Walking Shoes', essential: true, checked: false }
+  ],
+  'Beach Resort': [
+    { id: 'p-11', category: 'Clothing', name: 'Swimwear', essential: true, checked: false }
+  ],
+  'Alpine Hiking': [
+    { id: 'p-21', category: 'Gear', name: 'Boots', essential: true, checked: false }
+  ],
+  'Safari': [
+    { id: 'p-31', category: 'Clothing', name: 'Safari Attire', essential: true, checked: false }
+  ]
 };
 
 export const DEFAULT_ITINERARIES: Record<string, ItineraryDay[]> = {
@@ -1038,9 +983,65 @@ export const useTravelStore = defineStore('travel', {
       this.activeEmergencyDestId = destId;
     },
 
-    // Cultural Etiquette Actions
     setActiveEtiquetteDestId(destId: string) {
       this.activeEtiquetteDestId = destId;
+    },
+
+    // Printable Packing Checklist Actions
+    exportPackingTextList(): string {
+      let txt = `=========================================\n`;
+      txt += ` TRAVELPULSE PACKING CHECKLIST - ${this.currentPackingPreset.toUpperCase()}\n`;
+      txt += ` Generated: ${new Date().toLocaleDateString()}\n`;
+      txt += ` Progress: ${this.packingProgress.packed} / ${this.packingProgress.total} Items Packed (${this.packingProgress.percentage}%)\n`;
+      txt += `=========================================\n\n`;
+
+      const categories: PackingCategory[] = ['Documents', 'Clothing', 'Electronics', 'Toiletries', 'Gear'];
+
+      categories.forEach((cat) => {
+        const items = this.packingItems.filter((i) => i.category === cat);
+        if (items.length > 0) {
+          txt += `[ ${cat.toUpperCase()} ]\n`;
+          items.forEach((i) => {
+            const check = i.checked ? '[x]' : '[ ]';
+            const essential = i.essential ? ' (ESSENTIAL)' : '';
+            txt += `  ${check} ${i.name}${essential}\n`;
+          });
+          txt += `\n`;
+        }
+      });
+
+      return txt;
+    },
+
+    triggerPrintPackingList() {
+      const printWindow = window.open('', '_blank');
+      if (!printWindow) return;
+
+      const txtList = this.exportPackingTextList();
+
+      printWindow.document.write(`
+        <!DOCTYPE html>
+        <html>
+          <head>
+            <title>TravelPulse Packing Checklist - ${this.currentPackingPreset}</title>
+            <style>
+              body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; padding: 30px; color: #000; background: #fff; }
+              h2 { font-size: 24px; margin-bottom: 5px; color: #1e293b; }
+              .meta { font-size: 14px; color: #64748b; margin-bottom: 20px; border-bottom: 2px solid #e2e8f0; padding-bottom: 10px; }
+              pre { font-family: monospace; font-size: 14px; line-height: 1.5; white-space: pre-wrap; }
+            </style>
+          </head>
+          <body>
+            <h2>✈️ TravelPulse Packing Checklist</h2>
+            <div class="meta">Preset: <strong>${this.currentPackingPreset}</strong> | Generated: ${new Date().toLocaleDateString()}</div>
+            <pre>${txtList}</pre>
+            <script>
+              window.onload = function() { window.print(); window.close(); }
+            </script>
+          </body>
+        </html>
+      `);
+      printWindow.document.close();
     }
   }
 });

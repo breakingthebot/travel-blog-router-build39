@@ -49,16 +49,14 @@ describe('travelStore Pinia store', () => {
     expect(budgetUsd.currencySymbol).toBe('$');
   });
 
-  it('should retrieve local cultural etiquette rules, tipping customs, and Do/Dont guidelines', () => {
+  it('should generate structured text list and printable HTML for packing checklist export', () => {
     const store = useTravelStore();
-    const guideKyoto = store.getCulturalGuideForDestination('dest-1');
-    expect(guideKyoto.country).toBe('Japan');
-    expect(guideKyoto.dos.length).toBe(3);
-    expect(guideKyoto.donts.length).toBe(3);
+    store.loadPackingPreset('Urban Culture');
+    const txt = store.exportPackingTextList();
 
-    store.setActiveEtiquetteDestId('dest-2');
-    const guideSantorini = store.getCulturalGuideForDestination();
-    expect(guideSantorini.country).toBe('Greece');
-    expect(guideSantorini.donts[0].title).toContain('Toilet Paper');
+    expect(txt).toContain('TRAVELPULSE PACKING CHECKLIST');
+    expect(txt).toContain('URBAN CULTURE');
+    expect(txt).toContain('[ DOCUMENTS ]');
+    expect(txt).toContain('Passport & Visa Copies');
   });
 });

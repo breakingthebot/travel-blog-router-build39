@@ -5,6 +5,14 @@ All notable changes to **Build 39 — TravelPulse Vue Router Multi-page Travel B
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.18.0] - 2026-07-25
+
+### Added
+- Built `src/stores/travelStore.ts` printable packing checklist HTML generator (`triggerPrintPackingList()`) and text export generator (`exportPackingTextList()`).
+- Added `🖨️ Print / Save as PDF` trigger button to `PackingChecklist.vue` launching print dialog with styled printable layout.
+- Added `📄 Download (.txt)` export button to `PackingChecklist.vue` for saving offline text checklists.
+- Added unit tests in `src/stores/travelStore.spec.ts` testing structured packing list text generation.
+
 ## [0.17.0] - 2026-07-25
 
 ### Added

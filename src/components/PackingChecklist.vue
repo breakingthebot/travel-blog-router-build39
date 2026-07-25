@@ -55,6 +55,16 @@ const getCategoryIcon = (cat: PackingCategory) => {
     default: return '📍';
   }
 };
+
+function downloadTextChecklist() {
+  const element = document.createElement('a');
+  const file = new Blob([travelStore.exportPackingTextList()], { type: 'text/plain' });
+  element.href = URL.createObjectURL(file);
+  element.download = `packing-checklist-${travelStore.currentPackingPreset.toLowerCase().replace(/\s+/g, '-')}.txt`;
+  document.body.appendChild(element);
+  element.click();
+  document.body.removeChild(element);
+}
 </script>
 
 <template>
@@ -65,16 +75,27 @@ const getCategoryIcon = (cat: PackingCategory) => {
         <p class="subtitle">Customize and check off essential items tailored for your travel style.</p>
       </div>
 
-      <div class="preset-chips">
-        <button 
-          v-for="p in presets" 
-          :key="p.name"
-          @click="travelStore.loadPackingPreset(p.name)"
-          class="preset-chip-btn"
-          :class="{ active: travelStore.currentPackingPreset === p.name }"
-        >
-          <span>{{ p.icon }}</span> {{ p.name }}
-        </button>
+      <div class="header-actions">
+        <div class="preset-chips">
+          <button 
+            v-for="p in presets" 
+            :key="p.name"
+            @click="travelStore.loadPackingPreset(p.name)"
+            class="preset-chip-btn"
+            :class="{ active: travelStore.currentPackingPreset === p.name }"
+          >
+            <span>{{ p.icon }}</span> {{ p.name }}
+          </button>
+        </div>
+
+        <div class="export-btns">
+          <button @click="travelStore.triggerPrintPackingList()" class="btn-export print">
+            🖨️ Print / PDF
+          </button>
+          <button @click="downloadTextChecklist()" class="btn-export txt">
+            📄 Download (.txt)
+          </button>
+        </div>
       </div>
     </div>
 
@@ -209,6 +230,41 @@ const getCategoryIcon = (cat: PackingCategory) => {
 
 .checklist-header h3 { font-size: 22px; color: var(--text-primary); }
 .subtitle { font-size: 14px; color: var(--text-secondary); }
+
+.header-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+
+  @media (min-width: 768px) {
+    align-items: flex-end;
+  }
+}
+
+.export-btns {
+  display: flex;
+  gap: 6px;
+}
+
+.btn-export {
+  padding: 5px 10px;
+  border-radius: var(--radius-sm);
+  font-size: 11px;
+  font-weight: 700;
+  cursor: pointer;
+  border: 1px solid var(--border-color);
+}
+
+.btn-export.print {
+  background: var(--accent-emerald);
+  color: #000;
+  border-color: var(--accent-emerald);
+}
+
+.btn-export.txt {
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--text-secondary);
+}
 
 .preset-chips {
   display: flex;
