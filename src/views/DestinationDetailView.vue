@@ -8,6 +8,7 @@ import { computed } from 'vue';
 import { useRoute } from 'vue-router';
 import { useTravelStore } from '../stores/travelStore';
 import PostCard from '../components/PostCard.vue';
+import BudgetCalculator from '../components/BudgetCalculator.vue';
 
 const route = useRoute();
 const travelStore = useTravelStore();
@@ -47,6 +48,8 @@ const relatedPosts = computed(() => {
             <li><strong>Category:</strong> {{ destination.region }} Culture & Sightseeing</li>
           </ul>
         </div>
+
+        <BudgetCalculator :destination-id="destination.id" class="margin-top-calc" />
       </div>
 
       <div class="sidebar-col">

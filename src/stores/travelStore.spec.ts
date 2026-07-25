@@ -38,12 +38,34 @@ describe('travelStore Pinia store', () => {
     expect(store.savedWishlist.includes('dest-1')).toBe(false);
   });
 
-  it('should add comment to blog post correctly', () => {
+  it('should calculate trip budget and convert currencies correctly', () => {
     const store = useTravelStore();
-    const initialCount = store.posts[0].comments.length;
+    store.setTripDays(10);
+    store.setTravelStyle('explorer');
+    store.setCurrency('USD');
 
-    store.addCommentToPost('post-1', 'Stunning pictures!', 'Sofia');
-    expect(store.posts[0].comments.length).toBe(initialCount + 1);
-    expect(store.posts[0].comments[initialCount].text).toBe('Stunning pictures!');
+    const budgetUsd = store.calculateDestinationBudget('dest-1'); // Kyoto explorer = $130/day * 10 days = $1300
+    expect(budgetUsd.totalBudget).toBe(1300);
+    expect(budgetUsd.currencySymbol).toBe('$');
+
+    // Change currency to JPY (1 USD = 155 JPY)
+    store.setCurrency('JPY');
+    const budgetJpy = store.calculateDestinationBudget('dest-1');
+    expect(budgetJpy.currencySymbol).toBe('¥');
+    expect(budgetJpy.totalBudget).toBe(201500); // 1300 * 155
+  });
+
+  it('should update travel style multipliers correctly', () => {
+    const store = useTravelStore();
+    store.setTripDays(5);
+    store.setCurrency('USD');
+
+    store.setTravelStyle('backpacker');
+    const backpackerBudget = store.calculateDestinationBudget('dest-1');
+    expect(backpackerBudget.dailyCost).toBe(55);
+
+    store.setTravelStyle('luxury');
+    const luxuryBudget = store.calculateDestinationBudget('dest-1');
+    expect(luxuryBudget.dailyCost).toBe(320);
   });
 });

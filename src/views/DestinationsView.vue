@@ -6,6 +6,7 @@
 <script setup lang="ts">
 import { useTravelStore } from '../stores/travelStore';
 import DestinationCard from '../components/DestinationCard.vue';
+import BudgetCalculator from '../components/BudgetCalculator.vue';
 
 const travelStore = useTravelStore();
 const regions = ['All', 'Europe', 'Asia', 'Africa', 'Americas'];
@@ -59,6 +60,11 @@ const regions = ['All', 'Europe', 'Asia', 'Africa', 'Americas'];
         Reset Search Filters
       </button>
     </div>
+
+    <!-- Interactive Budget Estimator Tool -->
+    <section class="budget-section">
+      <BudgetCalculator />
+    </section>
   </div>
 </template>
 

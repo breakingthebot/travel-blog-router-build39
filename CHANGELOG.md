@@ -5,6 +5,17 @@ All notable changes to **Build 39 — TravelPulse Vue Router Multi-page Travel B
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.2.0] - 2026-07-25
+
+### Added
+- Built `src/components/BudgetCalculator.vue` providing interactive trip budget estimation and real-time currency conversion.
+- Added trip duration slider (1 to 30 days) with quick preset buttons (3, 7, 14, 21 days).
+- Added travel style selector chips (`Backpacker`, `Explorer`, `Luxury`) with per-destination daily cost baselines.
+- Added live currency conversion between USD ($), EUR (€), GBP (£), and JPY (¥).
+- Added category cost breakdown visual meters (Accommodation 45%, Dining 30%, Transport 15%, Activities 10%).
+- Integrated `BudgetCalculator.vue` into `DestinationDetailView.vue` and `DestinationsView.vue`.
+- Added unit tests in `src/stores/travelStore.spec.ts` testing trip budget calculations, travel style multipliers, and currency conversion logic.
+
 ## [0.1.0] - 2026-07-25
 
 ### Added

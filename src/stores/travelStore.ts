@@ -1,5 +1,5 @@
 // src/stores/travelStore.ts
-// Pinia store managing travel destinations, blog posts, photo gallery, and saved wishlist bookmarks.
+// Pinia store managing travel destinations, blog posts, photo gallery, bookmarks, and trip budget estimation calculator.
 // Connects to: views/*.vue, components/*.vue
 // Created: 2026-07-25
 
@@ -16,6 +16,11 @@ export interface Destination {
   bestTimeToVisit: string;
   rating: number;
   featured?: boolean;
+  dailyCostsUsd: {
+    backpacker: number;
+    explorer: number;
+    luxury: number;
+  };
 }
 
 export interface BlogPost {
@@ -41,6 +46,16 @@ export interface GalleryPhoto {
   photographer: string;
 }
 
+export type TravelStyle = 'backpacker' | 'explorer' | 'luxury';
+export type CurrencyCode = 'USD' | 'EUR' | 'GBP' | 'JPY';
+
+export const CURRENCY_RATES: Record<CurrencyCode, { symbol: string; rateFromUsd: number }> = {
+  USD: { symbol: '$', rateFromUsd: 1.0 },
+  EUR: { symbol: '€', rateFromUsd: 0.92 },
+  GBP: { symbol: '£', rateFromUsd: 0.78 },
+  JPY: { symbol: '¥', rateFromUsd: 155.0 }
+};
+
 export const INITIAL_DESTINATIONS: Destination[] = [
   {
     id: 'dest-1',
@@ -52,7 +67,12 @@ export const INITIAL_DESTINATIONS: Destination[] = [
     description: 'Kyoto, once the capital of Japan, is a city on the island of Honshu. It is famous for its numerous classical Buddhist temples, gardens, imperial palaces, Shinto shrines, and traditional wooden houses.',
     bestTimeToVisit: 'March to May & October to November',
     rating: 4.9,
-    featured: true
+    featured: true,
+    dailyCostsUsd: {
+      backpacker: 55,
+      explorer: 130,
+      luxury: 320
+    }
   },
   {
     id: 'dest-2',
@@ -64,7 +84,12 @@ export const INITIAL_DESTINATIONS: Destination[] = [
     description: 'Santorini is one of the Cyclades islands in the Aegean Sea. It was devastated by a volcanic eruption in the 16th century BC, forever shaping its rugged landscape.',
     bestTimeToVisit: 'Late April to early November',
     rating: 4.8,
-    featured: true
+    featured: true,
+    dailyCostsUsd: {
+      backpacker: 75,
+      explorer: 180,
+      luxury: 450
+    }
   },
   {
     id: 'dest-3',
@@ -76,7 +101,12 @@ export const INITIAL_DESTINATIONS: Destination[] = [
     description: 'The Swiss Alps form part of the Alpine region of Europe, offering breathtaking glacier panoramas, mountain railways, and world-class hiking trails.',
     bestTimeToVisit: 'June to September & December to March',
     rating: 4.9,
-    featured: true
+    featured: true,
+    dailyCostsUsd: {
+      backpacker: 90,
+      explorer: 210,
+      luxury: 520
+    }
   },
   {
     id: 'dest-4',
@@ -87,7 +117,12 @@ export const INITIAL_DESTINATIONS: Destination[] = [
     tagline: 'The great wildlife migration & endless golden savannahs',
     description: 'The Serengeti ecosystem is a geographical region in Africa spanning northern Tanzania, famous for its massive annual migration of wildebeest and zebra.',
     bestTimeToVisit: 'January to February & June to October',
-    rating: 4.9
+    rating: 4.9,
+    dailyCostsUsd: {
+      backpacker: 110,
+      explorer: 260,
+      luxury: 680
+    }
   }
 ];
 
@@ -147,7 +182,14 @@ export const useTravelStore = defineStore('travel', {
     selectedRegion: 'All' as string,
     searchQuery: '' as string,
     savedWishlist: [] as string[],
-    activeLightboxImage: null as GalleryPhoto | null
+    activeLightboxImage: null as GalleryPhoto | null,
+
+    // Trip Budget Calculator State
+    budgetConfig: {
+      tripDays: 7 as number,
+      travelStyle: 'explorer' as TravelStyle,
+      currency: 'USD' as CurrencyCode
+    }
   }),
 
   getters: {
@@ -164,6 +206,36 @@ export const useTravelStore = defineStore('travel', {
 
     featuredDestinations: (state) => {
       return state.destinations.filter((d) => d.featured);
+    },
+
+    calculateDestinationBudget: (state) => {
+      return (destId: string) => {
+        const dest = state.destinations.find((d) => d.id === destId) || state.destinations[0];
+        const style = state.budgetConfig.travelStyle;
+        const days = state.budgetConfig.tripDays;
+        const curr = state.budgetConfig.currency;
+        const rateInfo = CURRENCY_RATES[curr];
+
+        const dailyUsd = dest.dailyCostsUsd[style];
+        const totalUsd = dailyUsd * days;
+
+        const convertedDaily = dailyUsd * rateInfo.rateFromUsd;
+        const convertedTotal = totalUsd * rateInfo.rateFromUsd;
+
+        // Breakdown distribution: Accom 45%, Food 30%, Transport 15%, Activities 10%
+        return {
+          currencySymbol: rateInfo.symbol,
+          currencyCode: curr,
+          dailyCost: Math.round(convertedDaily),
+          totalBudget: Math.round(convertedTotal),
+          breakdown: {
+            accommodation: Math.round(convertedTotal * 0.45),
+            dining: Math.round(convertedTotal * 0.30),
+            transport: Math.round(convertedTotal * 0.15),
+            activities: Math.round(convertedTotal * 0.10)
+          }
+        };
+      };
     }
   },
 
@@ -203,6 +275,19 @@ export const useTravelStore = defineStore('travel', {
 
     closeLightbox() {
       this.activeLightboxImage = null;
+    },
+
+    // Budget Calculator Actions
+    setTripDays(days: number) {
+      this.budgetConfig.tripDays = Math.max(1, Math.min(60, days));
+    },
+
+    setTravelStyle(style: TravelStyle) {
+      this.budgetConfig.travelStyle = style;
+    },
+
+    setCurrency(curr: CurrencyCode) {
+      this.budgetConfig.currency = curr;
     }
   }
 });
