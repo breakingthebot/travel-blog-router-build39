@@ -5,6 +5,18 @@ All notable changes to **Build 39 — TravelPulse Vue Router Multi-page Travel B
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.6.0] - 2026-07-25
+
+### Added
+- Built `src/components/TravelMapVisualizer.vue` providing an interactive global route map and travel distance matrix.
+- Added SVG interactive canvas displaying continent outlines and animated destination pin markers with pulse rings.
+- Added origin hub selector (`New York (NYC)` vs `London (LHR)`).
+- Added flight route arc curves connecting selected origin hub to destination pins.
+- Added map pin tooltips with flight duration & distance metrics.
+- Added interactive Distance Matrix table comparing flight durations from NYC and London along with kilometer distances.
+- Integrated `TravelMapVisualizer.vue` into `DestinationDetailView.vue` and `DestinationsView.vue`.
+- Added unit tests in `src/stores/travelStore.spec.ts` testing map pin selection and origin hub toggling.
+
 ## [0.5.0] - 2026-07-25
 
 ### Added

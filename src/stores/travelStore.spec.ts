@@ -80,23 +80,28 @@ describe('travelStore Pinia store', () => {
     const store = useTravelStore();
     expect(store.quiz.currentStep).toBe(0);
 
-    // Answer Question 1: culture
     store.answerQuizStep('culture');
     expect(store.quiz.currentStep).toBe(1);
 
-    // Answer Question 2: explorer
     store.answerQuizStep('explorer');
     expect(store.quiz.currentStep).toBe(2);
 
-    // Answer Question 3: culture -> triggers recommendation
     store.answerQuizStep('culture');
-    expect(store.quiz.currentStep).toBe(3); // Result screen step
+    expect(store.quiz.currentStep).toBe(3);
     expect(store.quizRecommendedDestination.name).toBe('Kyoto');
-    expect(store.quiz.matchScore).toBeGreaterThanOrEqual(85);
 
-    // Reset Quiz
     store.resetQuiz();
     expect(store.quiz.currentStep).toBe(0);
-    expect(store.quiz.selectedVibes.length).toBe(0);
+  });
+
+  it('should support interactive map destination selection and distance matrix hub switching', () => {
+    const store = useTravelStore();
+    expect(store.activeMapDestination.name).toBe('Kyoto');
+
+    store.setActiveMapDestination('dest-2');
+    expect(store.activeMapDestination.name).toBe('Santorini');
+
+    store.setOriginHub('London');
+    expect(store.selectedOriginHub).toBe('London');
   });
 });

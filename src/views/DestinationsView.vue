@@ -10,6 +10,7 @@ import BudgetCalculator from '../components/BudgetCalculator.vue';
 import ItineraryBuilder from '../components/ItineraryBuilder.vue';
 import PackingChecklist from '../components/PackingChecklist.vue';
 import TravelQuiz from '../components/TravelQuiz.vue';
+import TravelMapVisualizer from '../components/TravelMapVisualizer.vue';
 
 const travelStore = useTravelStore();
 const regions = ['All', 'Europe', 'Asia', 'Africa', 'Americas'];
@@ -67,6 +68,11 @@ const regions = ['All', 'Europe', 'Asia', 'Africa', 'Americas'];
     <!-- Interactive Travel Quiz Section -->
     <section class="margin-bottom-calc">
       <TravelQuiz />
+    </section>
+
+    <!-- Interactive Travel Map & Distance Matrix -->
+    <section class="margin-top">
+      <TravelMapVisualizer />
     </section>
 
     <!-- Interactive Budget Estimator Tool, Itinerary Planner & Packing Checklist -->

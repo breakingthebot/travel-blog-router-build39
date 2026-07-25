@@ -1,9 +1,19 @@
 // src/stores/travelStore.ts
-// Pinia store managing travel destinations, blog posts, photo gallery, bookmarks, trip budget calculator, visual trip itinerary builder, packing checklist generator, and interactive travel quiz recommender.
+// Pinia store managing travel destinations, blog posts, photo gallery, bookmarks, trip budget calculator, visual trip itinerary builder, packing checklist generator, travel quiz recommender, and travel map visualizer with distance matrix.
 // Connects to: views/*.vue, components/*.vue
 // Created: 2026-07-25
 
 import { defineStore } from 'pinia';
+
+export interface DestinationMapCoords {
+  lat: number;
+  lng: number;
+  svgX: number; // Map percentage X coordinate (0-100%)
+  svgY: number; // Map percentage Y coordinate (0-100%)
+  flightFromNyc: string;
+  flightFromLondon: string;
+  distanceFromNycKm: number;
+}
 
 export interface Destination {
   id: string;
@@ -22,6 +32,7 @@ export interface Destination {
     luxury: number;
   };
   vibeTags: string[];
+  coords: DestinationMapCoords;
 }
 
 export interface BlogPost {
@@ -102,7 +113,16 @@ export const INITIAL_DESTINATIONS: Destination[] = [
     rating: 4.9,
     featured: true,
     dailyCostsUsd: { backpacker: 55, explorer: 130, luxury: 320 },
-    vibeTags: ['culture', 'historic', 'temple', 'gourmet']
+    vibeTags: ['culture', 'historic', 'temple', 'gourmet'],
+    coords: {
+      lat: 35.0116,
+      lng: 135.7681,
+      svgX: 84.5,
+      svgY: 38.0,
+      flightFromNyc: '14.5 hrs',
+      flightFromLondon: '12.0 hrs',
+      distanceFromNycKm: 10850
+    }
   },
   {
     id: 'dest-2',
@@ -116,7 +136,16 @@ export const INITIAL_DESTINATIONS: Destination[] = [
     rating: 4.8,
     featured: true,
     dailyCostsUsd: { backpacker: 75, explorer: 180, luxury: 450 },
-    vibeTags: ['beach', 'romantic', 'sunset', 'island']
+    vibeTags: ['beach', 'romantic', 'sunset', 'island'],
+    coords: {
+      lat: 36.3932,
+      lng: 25.4615,
+      svgX: 57.0,
+      svgY: 37.5,
+      flightFromNyc: '10.0 hrs',
+      flightFromLondon: '3.8 hrs',
+      distanceFromNycKm: 8120
+    }
   },
   {
     id: 'dest-3',
@@ -130,7 +159,16 @@ export const INITIAL_DESTINATIONS: Destination[] = [
     rating: 4.9,
     featured: true,
     dailyCostsUsd: { backpacker: 90, explorer: 210, luxury: 520 },
-    vibeTags: ['alpine', 'hiking', 'mountain', 'nature']
+    vibeTags: ['alpine', 'hiking', 'mountain', 'nature'],
+    coords: {
+      lat: 46.5197,
+      lng: 8.0226,
+      svgX: 52.0,
+      svgY: 30.0,
+      flightFromNyc: '8.5 hrs',
+      flightFromLondon: '1.5 hrs',
+      distanceFromNycKm: 6380
+    }
   },
   {
     id: 'dest-4',
@@ -143,7 +181,16 @@ export const INITIAL_DESTINATIONS: Destination[] = [
     bestTimeToVisit: 'January to February & June to October',
     rating: 4.9,
     dailyCostsUsd: { backpacker: 110, explorer: 260, luxury: 680 },
-    vibeTags: ['wildlife', 'safari', 'nature', 'adventure']
+    vibeTags: ['wildlife', 'safari', 'nature', 'adventure'],
+    coords: {
+      lat: -2.3333,
+      lng: 34.8333,
+      svgX: 59.5,
+      svgY: 62.0,
+      flightFromNyc: '16.0 hrs',
+      flightFromLondon: '10.5 hrs',
+      distanceFromNycKm: 11940
+    }
   }
 ];
 
@@ -264,7 +311,11 @@ export const useTravelStore = defineStore('travel', {
       selectedVibes: [] as string[],
       recommendedDestId: null as string | null,
       matchScore: 95 as number
-    }
+    },
+
+    // Travel Map State
+    activeMapDestId: 'dest-1' as string,
+    selectedOriginHub: 'NYC' as 'NYC' | 'London'
   }),
 
   getters: {
@@ -342,6 +393,10 @@ export const useTravelStore = defineStore('travel', {
     quizRecommendedDestination: (state) => {
       if (!state.quiz.recommendedDestId) return state.destinations[0];
       return state.destinations.find((d) => d.id === state.quiz.recommendedDestId) || state.destinations[0];
+    },
+
+    activeMapDestination: (state) => {
+      return state.destinations.find((d) => d.id === state.activeMapDestId) || state.destinations[0];
     }
   },
 
@@ -478,19 +533,16 @@ export const useTravelStore = defineStore('travel', {
       this.loadPackingPreset(this.currentPackingPreset);
     },
 
-    // Travel Quiz Actions
     answerQuizStep(vibe: string) {
       this.quiz.selectedVibes.push(vibe);
       if (this.quiz.currentStep < QUIZ_QUESTIONS.length - 1) {
         this.quiz.currentStep++;
       } else {
-        // Calculate Recommendation
         this.calculateQuizRecommendation();
       }
     },
 
     calculateQuizRecommendation() {
-      // Find destination matching highest number of selected vibe tags
       let bestMatch = this.destinations[0];
       let maxScore = -1;
 
@@ -510,13 +562,22 @@ export const useTravelStore = defineStore('travel', {
 
       this.quiz.recommendedDestId = bestMatch.id;
       this.quiz.matchScore = Math.min(98, 85 + (maxScore * 4));
-      this.quiz.currentStep = QUIZ_QUESTIONS.length; // Result Screen
+      this.quiz.currentStep = QUIZ_QUESTIONS.length;
     },
 
     resetQuiz() {
       this.quiz.currentStep = 0;
       this.quiz.selectedVibes = [];
       this.quiz.recommendedDestId = null;
+    },
+
+    // Map Visualizer Actions
+    setActiveMapDestination(destId: string) {
+      this.activeMapDestId = destId;
+    },
+
+    setOriginHub(hub: 'NYC' | 'London') {
+      this.selectedOriginHub = hub;
     }
   }
 });
